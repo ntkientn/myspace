@@ -12,28 +12,43 @@
     
 <body class="bg-slate-950 text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white text-[17px] md:text-lg">
     <!-- NAVBAR -->
-    <nav class="sticky top-0 z-50 bg-slate-950/80 backdrop-blur-md border-b border-slate-800 py-4 px-6">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <div class="text-slate-300 text-xs font-mono transition">
+<!-- UPDATED NAVBAR WITH SEPARATED MOBILE TOP-BAR CONTACT -->
+    <nav class="sticky top-0 z-50 bg-slate-950/90 backdrop-blur-md border-b border-slate-800 py-3 px-4 md:px-6">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row md:justify-between md:items-center gap-3 md:gap-0">
+            
+            <!-- CONTACT INFO SECTION: Top-bar on Mobile, Left-side on Desktop -->
+            <div class="text-slate-300 text-[11px] md:text-xs font-mono transition text-center md:text-left border-b border-slate-900 pb-2 md:pb-0 md:border-none">
                 <span class="text-slate-400">  
-                    <a class="text-slate-300 text-xs font-mono transition">Contact:  +84 94 909 4444  •  </a>  <a href="mailto:kien.working@gmail.com" class="text-slate-300 hover:text-indigo-400 text-xs font-mono transition">kien.working@gmail.com</a>  •  <a href="https://www.linkedin.com/in/ntkien/" target="_blank" class="text-slate-300 hover:text-indigo-400 text-xs font-mono transition">linkedin.com/in/ntkien  </a> 
+                    <span class="text-slate-300">Contact: +84 94 909 4444 • </span> 
+                    <a href="mailto:kien.working@gmail.com" class="text-slate-300 hover:text-indigo-400 transition">kien.working@gmail.com</a> 
+                    <span class="hidden md:inline"> • </span>
+                    <!-- Trên Mobile sẽ đẩy link LinkedIn xuống dòng cho thoáng, PC giữ nguyên một hàng -->
+                    <br class="md:hidden" />
+                    <a href="https://www.linkedin.com/in/ntkien/" target="_blank" class="text-slate-300 hover:text-indigo-400 transition">linkedin.com/in/ntkien</a> 
                 </span>
             </div>
-            <div class="flex items-center gap-4 md:gap-6 text-sm">
-                <a href="#about" data-i18n="nav-about" class="hover:text-indigo-400 transition">About</a>
-                <a href="#experience" data-i18n="nav-exp" class="hover:text-indigo-400 transition">Experience</a>
-                <a href="#contact" data-i18n="nav-contact" class="hover:text-indigo-400 transition">Contact</a>
+            
+            <!-- NAVIGATION & LANGUAGE TOGGLE -->
+            <div class="flex justify-between md:justify-end items-center gap-4 text-xs md:text-sm">
+                <!-- Cụm menu điều hướng -->
+                <div class="flex items-center gap-3 md:gap-4 font-medium text-slate-300 mx-auto md:mx-0">
+                    <a href="#about" data-i18n="nav-about" class="hover:text-indigo-400 transition py-0.5">Giới thiệu</a>
+                    <a href="#experience" data-i18n="nav-exp" class="hover:text-indigo-400 transition py-0.5">Kinh nghiệm</a>
+                    <a href="#contact" data-i18n="nav-contact" class="hover:text-indigo-400 transition py-0.5">Liên hệ</a>
+                </div>
                 
-                <div class="h-4 w-px bg-slate-800"></div>
+                <!-- Vạch ngăn cách (Chỉ hiện trên PC) -->
+                <div class="h-4 w-px bg-slate-800 hidden md:block"></div>
                 
-                <!-- Nút chuyển đổi ngôn ngữ (Mặc định hiển thị chữ VI để chuyển sang Tiếng Việt) -->
-                <button onclick="toggleLang()" id="lang-btn" class="bg-slate-900 border border-slate-700 hover:border-indigo-500 text-slate-200 px-2.5 py-1 rounded text-xs font-semibold transition cursor-pointer">
-                    VI
+                <!-- Nút chuyển đổi ngôn ngữ -->
+                <button onclick="toggleLang()" id="lang-btn" class="bg-slate-900 border border-slate-700 hover:border-indigo-500 text-slate-200 px-2 py-0.5 md:py-1 rounded text-[11px] font-bold transition cursor-pointer shrink-0 min-w-[28px] text-center">
+                    EN
                 </button>
             </div>
+            
         </div>
     </nav>
-
+    
     <!-- HERO SECTION -->
     <section id="about" class="max-w-5xl mx-auto px-6 pt-12 pb-20 md:py-24 flex flex-col-reverse md:flex-row items-center justify-between gap-10">
         <!-- Nội dung text bên trái -->
