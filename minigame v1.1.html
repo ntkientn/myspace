@@ -574,3 +574,71 @@
             }
 
             canvas.onmousedown = () => playerShip.isDragging = true;
+            window.onmouseup = () => playerShip.isDragging = false;
+            canvas.onmousemove = (e) => { if(playerShip.isDragging) onMove(e.clientX, e.clientY); };
+
+            canvas.ontouchstart = () => playerShip.isDragging = true;
+            window.ontouchend = () => playerShip.isDragging = false;
+            canvas.ontouchmove = (e) => { if(playerShip.isDragging) onMove(e.touches[0].clientX, e.touches[0].clientY); };
+
+            function loop() {
+                if (!isGameRunning) return;
+                ctx.fillStyle = '#04040a'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                if (Math.random() > 0.88) lasers.push({ x: playerShip.x + playerShip.w/2 - 2, y: playerShip.y, w: 3.5, h: 14, speed: 7.5 });
+
+                ctx.save(); ctx.shadowBlur = 10; ctx.shadowColor = '#f43f5e';
+                ctx.fillStyle = '#e11d48';
+                ctx.beginPath(); ctx.moveTo(playerShip.x + playerShip.w/2, playerShip.y);
+                ctx.lineTo(playerShip.x + playerShip.w, playerShip.y + playerShip.h);
+                ctx.lineTo(playerShip.x + playerShip.w/2, playerShip.y + playerShip.h * 0.78);
+                ctx.lineTo(playerShip.x, playerShip.y + playerShip.h); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#22d3ee'; ctx.fillRect(playerShip.x + playerShip.w/2 - 3, playerShip.y + playerShip.h - 2, 6, 5);
+                ctx.restore();
+
+                for (let i = lasers.length - 1; i >= 0; i--) {
+                    let l = lasers[i]; l.y -= l.speed;
+                    if (l.y < 0) { lasers.splice(i, 1); continue; }
+                    ctx.fillStyle = '#38bdf8'; ctx.shadowBlur = 8; ctx.shadowColor = '#38bdf8';
+                    ctx.fillRect(l.x, l.y, l.w, l.h); ctx.restore();
+                }
+
+                enemyTimer++;
+                if (enemyTimer > Math.max(25, 55 - killCount * 0.4)) {
+                    enemies.push({ x: Math.random() * (canvas.width - 30), y: -30, w: 28, h: 24, speed: 1.8 + Math.random() * 1.5 });
+                    enemyTimer = 0;
+                }
+
+                for (let i = enemies.length - 1; i >= 0; i--) {
+                    let e = enemies[i]; e.y += e.speed;
+                    if (e.y > canvas.height) { triggerGameOver(); return; }
+
+                    ctx.save(); ctx.shadowBlur = 8; ctx.shadowColor = '#a855f7'; ctx.fillStyle = '#a855f7';
+                    ctx.beginPath(); ctx.roundRect(e.x, e.y, e.w, e.h, 6); ctx.fill();
+                    ctx.fillStyle = '#ffffff'; ctx.fillRect(e.x + 5, e.y + 6, 4, 4); ctx.fillRect(e.x + e.w - 9, e.y + 6, 4, 4);
+                    ctx.restore();
+
+                    if (playerShip.x < e.x + e.w && playerShip.x + playerShip.w > e.x &&
+                        playerShip.y < e.y + e.h && playerShip.y + playerShip.h > e.y) {
+                        createExplosion(e.x + e.w/2, e.y + e.h/2, '#ef4444', 25);
+                        triggerGameOver(); return;
+                    }
+
+                    for (let j = lasers.length - 1; j >= 0; j--) {
+                        let l = lasers[j];
+                        if (l.x > e.x && l.x < e.x + e.w && l.y > e.y && l.y < e.y + e.h) {
+                            createExplosion(e.x + e.w/2, e.y + e.h/2, '#c084fc', 12);
+                            enemies.splice(i, 1); lasers.splice(j, 1);
+                            killCount++; updateScore(killCount * 10);
+                            break;
+                        }
+                    }
+                }
+                updateAndRenderParticles();
+                gameLoopId = requestAnimationFrame(loop);
+            }
+            loop();
+        }
+    </script>
+</body>
+</html>
