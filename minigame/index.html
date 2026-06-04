@@ -35,58 +35,90 @@
             <p class="text-xs text-slate-400 max-w-sm mx-auto">Sửa lỗi hiển thị thẻ bài - Tối ưu hình ảnh sinh động cho trẻ nhỏ!</p>
         </header>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
             
-            <!-- GAME 1: MEMORY CARDS -->
-            <button onclick="launchGame('memory')" class="group text-left bg-slate-900/40 border border-slate-800/80 p-5 rounded-2xl hover:border-purple-500/60 hover:shadow-[0_0_20px_rgba(168,85,247,0.15)] transition-all duration-300 cursor-pointer flex flex-col justify-between gap-6 relative overflow-hidden">
-                <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 group-hover:bg-purple-500/20 transition-colors"><i class="fa-solid fa-brain text-xl"></i></div>
-                <div>
-                    <span class="text-[10px] font-bold font-digital tracking-widest text-purple-400 bg-purple-500/10 px-2 py-0.5 rounded">TOUCH GAME</span>
-                    <h3 class="font-extrabold text-white text-lg mt-2 group-hover:text-purple-400 transition-colors">1. Lật Thẻ Sinh Vật</h3>
-                    <p class="text-xs text-slate-500 mt-1">Tìm các cặp hình thú và phi thuyền sinh động. Giúp con rèn luyện trí nhớ ngắn hạn và sự tập trung.</p>
+            <button onclick="launchGame('memory')" class="group text-left bg-slate-900/50 border border-slate-800/80 rounded-2xl hover:border-purple-500/60 hover:shadow-[0_0_25px_rgba(168,85,247,0.2)] transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full">
+                <div class="h-40 w-full overflow-hidden relative bg-purple-950/30">
+                    <img src="https://images.unsplash.com/photo-1606167668584-78701c57f13d?auto=format&fit=crop&w=500&q=80" alt="Memory Game" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80 group-hover:opacity-100">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+                    <span class="absolute top-3 right-3 text-[10px] font-bold font-digital tracking-widest text-purple-400 bg-purple-950/80 border border-purple-500/30 px-2 py-0.5 rounded-md backdrop-blur-sm">TOUCH GAME</span>
+                </div>
+                <div class="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-extrabold text-white text-lg group-hover:text-purple-400 transition-colors flex items-center gap-2">
+                            <i class="fa-solid fa-brain text-purple-400 text-sm"></i> 1. Lật Thẻ Sinh Vật
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-2 leading-relaxed">Tìm các cặp hình thú và phi thuyền sinh động. Giúp con rèn luyện trí nhớ ngắn hạn và sự tập trung.</p>
+                    </div>
                 </div>
             </button>
 
-            <!-- GAME 2: CYBER FLAPPY BIRD -->            
-            <button onclick="launchGame('bird')" class="group text-left bg-slate-900/40 border border-slate-800/80 p-5 rounded-2xl hover:border-cyan-500/60 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all duration-300 cursor-pointer flex flex-col justify-between gap-6 relative overflow-hidden">
-                <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500/20 transition-colors"><i class="fa-solid fa-dove text-xl"></i></div>
-                <div>
-                    <span class="text-[10px] font-bold font-digital tracking-widest text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded">1-TAP CONTROL</span>
-                    <h3 class="font-extrabold text-white text-lg mt-2 group-hover:text-cyan-400 transition-colors">2. Cyber Mecha Bird</h3>
-                    <p class="text-xs text-slate-500 mt-1">Điều khiển chú chim Robot cơ khí vỗ cánh vượt chướng ngại vật. Đồ họa vệt lửa năng lượng rực rỡ.</p>
+            <button onclick="launchGame('bird')" class="group text-left bg-slate-900/50 border border-slate-800/80 rounded-2xl hover:border-cyan-500/60 hover:shadow-[0_0_25px_rgba(34,211,238,0.2)] transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full">
+                <div class="h-40 w-full overflow-hidden relative bg-cyan-950/30">
+                    <img src="https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?auto=format&fit=crop&w=500&q=80" alt="Cyber Bird" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80 group-hover:opacity-100">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+                    <span class="absolute top-3 right-3 text-[10px] font-bold font-digital tracking-widest text-cyan-400 bg-cyan-950/80 border border-cyan-500/30 px-2 py-0.5 rounded-md backdrop-blur-sm">1-TAP CONTROL</span>
+                </div>
+                <div class="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-extrabold text-white text-lg group-hover:text-cyan-400 transition-colors flex items-center gap-2">
+                            <i class="fa-solid fa-dove text-cyan-400 text-sm"></i> 2. Cyber Mecha Bird
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-2 leading-relaxed">Điều khiển chú chim Robot cơ khí vỗ cánh vượt chướng ngại vật. Đồ họa vệt lửa năng lượng rực rỡ.</p>
+                    </div>
                 </div>
             </button>
 
-            <!-- GAME 3: 2048 MATRIX -->
-            <button onclick="launchGame('game2048')" class="group text-left bg-slate-900/40 border border-slate-800/80 p-5 rounded-2xl hover:border-amber-500/60 hover:shadow-[0_0_20px_rgba(245,158,11,0.15)] transition-all duration-300 cursor-pointer flex flex-col justify-between gap-6 relative overflow-hidden">
-                <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400 group-hover:bg-amber-500/20 transition-colors"><i class="fa-solid fa-cubes text-xl"></i></div>
-                <div>
-                    <span class="text-[10px] font-bold font-digital tracking-widest text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded">SWIPE CONTROL</span>
-                    <h3 class="font-extrabold text-white text-lg mt-2 group-hover:text-amber-400 transition-colors">3. Ma Trận Số 2048</h3>
-                    <p class="text-xs text-slate-500 mt-1">Vuốt màn hình để dịch chuyển và gộp các ô số. Rèn luyện tư duy toán học và logic tính toán.</p>
+            <button onclick="launchGame('game2048')" class="group text-left bg-slate-900/50 border border-slate-800/80 rounded-2xl hover:border-amber-500/60 hover:shadow-[0_0_25px_rgba(245,158,11,0.2)] transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full">
+                <div class="h-40 w-full overflow-hidden relative bg-amber-950/30">
+                    <img src="https://images.unsplash.com/photo-1611195974226-a6a9be9dd763?auto=format&fit=crop&w=500&q=80" alt="Matrix 2048" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80 group-hover:opacity-100">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+                    <span class="absolute top-3 right-3 text-[10px] font-bold font-digital tracking-widest text-amber-400 bg-amber-950/80 border border-amber-500/30 px-2 py-0.5 rounded-md backdrop-blur-sm">SWIPE CONTROL</span>
+                </div>
+                <div class="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-extrabold text-white text-lg group-hover:text-amber-400 transition-colors flex items-center gap-2">
+                            <i class="fa-solid fa-cubes text-amber-400 text-sm"></i> 3. Ma Trận Số 2048
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-2 leading-relaxed">Vuốt màn hình để dịch chuyển và gộp các ô số. Rèn luyện tư duy toán học và logic tính toán.</p>
+                    </div>
                 </div>
             </button>
 
-            <!-- GAME 4: CYBER SPACESHIP -->
-            <button onclick="launchGame('shooter')" class="group text-left bg-slate-900/40 border border-slate-800/80 p-5 rounded-2xl hover:border-red-500/60 hover:shadow-[0_0_20px_rgba(239,68,68,0.15)] transition-all duration-300 cursor-pointer flex flex-col justify-between gap-6 relative overflow-hidden">
-                <div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center text-red-400 group-hover:bg-red-500/20 transition-colors"><i class="fa-solid fa-jet-fighter text-xl"></i></div>
-                <div>
-                    <span class="text-[10px] font-bold font-digital tracking-widest text-red-400 bg-red-500/10 px-2 py-0.5 rounded">DRAG TO FLY</span>
-                    <h3 class="font-extrabold text-white text-lg mt-2 group-hover:text-red-400 transition-colors">4. Chiến Cơ Vũ Trụ</h3>
-                    <p class="text-xs text-slate-500 mt-1">Giữ và di ngón tay để lái chiến cơ nã đạn hủy diệt quái vật vũ trụ. Hiệu ứng bùng nổ sống động.</p>
+            <button onclick="launchGame('shooter')" class="group text-left bg-slate-900/50 border border-slate-800/80 rounded-2xl hover:border-red-500/60 hover:shadow-[0_0_25px_rgba(239,68,68,0.2)] transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full">
+                <div class="h-40 w-full overflow-hidden relative bg-red-950/30">
+                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=500&q=80" alt="Space Shooter" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80 group-hover:opacity-100">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+                    <span class="absolute top-3 right-3 text-[10px] font-bold font-digital tracking-widest text-red-400 bg-red-500/10 px-2 py-0.5 rounded-md backdrop-blur-sm">DRAG TO FLY</span>
+                </div>
+                <div class="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-extrabold text-white text-lg group-hover:text-red-400 transition-colors flex items-center gap-2">
+                            <i class="fa-solid fa-jet-fighter text-red-400 text-sm"></i> 4. Chiến Cơ Vũ Trụ
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-2 leading-relaxed">Giữ và di ngón tay để lái chiến cơ nã đạn hủy diệt quái vật vũ trụ. Hiệu ứng bùng nổ sống động.</p>
+                    </div>
                 </div>
             </button>
 
-            <!-- GAME 5: CYBER SNAKE -->
-            <button onclick="launchGame('snake')" class="group text-left bg-slate-900/40 border border-slate-800/80 p-5 rounded-2xl hover:border-emerald-500/60 hover:shadow-[0_0_20px_rgba(16,185,129,0.15)] transition-all duration-300 cursor-pointer flex flex-col justify-between gap-6 relative overflow-hidden">
-                <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 group-hover:bg-emerald-500/20 transition-colors"><i class="fa-solid fa-gamepad text-xl"></i></div>
-                <div>
-                    <span class="text-[10px] font-bold font-digital tracking-widest text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">4-WAY CONTROL</span>
-                    <h3 class="font-extrabold text-white text-lg mt-2 group-hover:text-emerald-400 transition-colors">5. Rắn Săn Mồi Cyber</h3>
-                    <p class="text-xs text-slate-500 mt-1">Điều khiển rắn ăn các lõi năng lượng màu xanh lá. Càng ăn nhiều rắn càng dài ra và chạy nhanh hơn.</p>
+            <button onclick="launchGame('snake')" class="group text-left bg-slate-900/50 border border-slate-800/80 rounded-2xl hover:border-emerald-500/60 hover:shadow-[0_0_25px_rgba(16,185,129,0.2)] transition-all duration-300 cursor-pointer overflow-hidden flex flex-col h-full">
+                <div class="h-40 w-full overflow-hidden relative bg-emerald-950/30">
+                    <img src="https://images.unsplash.com/photo-1553481187-be93c21490a9?auto=format&fit=crop&w=500&q=80" alt="Cyber Snake" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-80 group-hover:opacity-100">
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent"></div>
+                    <span class="absolute top-3 right-3 text-[10px] font-bold font-digital tracking-widest text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-md backdrop-blur-sm">4-WAY CONTROL</span>
+                </div>
+                <div class="p-5 flex-1 flex flex-col justify-between">
+                    <div>
+                        <h3 class="font-extrabold text-white text-lg group-hover:text-emerald-400 transition-colors flex items-center gap-2">
+                            <i class="fa-solid fa-gamepad text-emerald-400 text-sm"></i> 5. Rắn Săn Mồi Cyber
+                        </h3>
+                        <p class="text-xs text-slate-400 mt-2 leading-relaxed">Điều khiển rắn ăn các lõi năng lượng màu xanh lá. Càng ăn nhiều rắn càng dài ra và chạy nhanh hơn.</p>
+                    </div>
                 </div>
             </button>
-        </div>
+
+        </div>  
+           
     </div>
 
     <div id="game-view" class="relative z-10 w-full max-w-[440px] h-screen mx-auto flex flex-col justify-between py-3 px-4 hidden">
