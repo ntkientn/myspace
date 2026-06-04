@@ -234,8 +234,12 @@
         function backToDashboard() {
             isGameRunning = false;
             if (gameLoopId) cancelAnimationFrame(gameLoopId);
+            
+            // Giải phóng toàn bộ sự kiện kẹt
             canvas.onmousedown = null; canvas.ontouchstart = null;
             canvas.onmousemove = null; canvas.ontouchmove = null;
+            window.onmouseup = null; window.ontouchend = null; // Bổ sung dòng này
+            
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             document.getElementById('game-view').classList.add('hidden');
             document.getElementById('dashboard-view').classList.remove('hidden');
@@ -255,12 +259,16 @@
             isGameRunning = false;
             if (gameLoopId) cancelAnimationFrame(gameLoopId);
             
-            // GIẢI PHÓNG MÀN HÌNH MOBILE: Xóa bỏ các bộ lắng nghe sự kiện để tránh treo đơ click
+            // 1. GIẢI PHÓNG TOÀN DIỆN CANVAS VÀ WINDOW (Sửa triệt để lỗi đơ game chiến cơ)
             canvas.ontouchstart = null;
             canvas.ontouchmove = null;
             canvas.ontouchend = null;
             canvas.onmousemove = null;
             canvas.onmousedown = null;
+            
+            // Xóa bỏ trạng thái kéo thả kẹt trên cửa sổ trình duyệt
+            window.onmouseup = null;
+            window.ontouchend = null;
 
             const overlay = document.getElementById('game-overlay');
             const title = document.getElementById('overlay-title');
