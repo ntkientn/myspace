@@ -13,10 +13,12 @@
 <body class="bg-[#0b0f19] text-slate-300 font-sans antialiased selection:bg-indigo-500 selection:text-white text-[17px] md:text-lg relative w-full overflow-x-hidden">
     
     <!-- HIGH-TECH DYNAMIC BACKGROUND (Giữ hiệu ứng v1.2) -->
-    <div class="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_60%_at_50%_40%,#000_60%,transparent_100%)] z-0 pointer-events-none opacity-25"></div>
-    <div class="absolute top-[-5%] left-[-5%] w-[60rem] h-[60rem] rounded-full bg-indigo-500/12 blur-[140px] z-0 pointer-events-none"></div>
-    <div class="absolute top-[25%] right-[-10%] w-[50rem] h-[50rem] rounded-full bg-purple-500/10 blur-[140px] z-0 pointer-events-none"></div>
-    <div class="absolute bottom-[10%] left-[-10%] w-[45rem] h-[45rem] rounded-full bg-emerald-500/8 blur-[120px] z-0 pointer-events-none"></div>
+    <div class="absolute inset-0 w-full overflow-hidden pointer-events-none z-0">
+        <div class="absolute inset-0 bg-[linear-gradient(to_right,#1e293b_1px,transparent_1px),linear-gradient(to_bottom,#1e293b_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_60%_at_50%_40%,#000_60%,transparent_100%)] opacity-25"></div>
+        <div class="absolute top-[-5%] left-[-5%] w-[60rem] h-[60rem] rounded-full bg-indigo-500/12 blur-[140px]"></div>
+        <div class="absolute top-[25%] right-[-10%] w-[50rem] h-[50rem] rounded-full bg-purple-500/10 blur-[140px]"></div>
+        <div class="absolute bottom-[10%] left-[-10%] w-[45rem] h-[45rem] rounded-full bg-emerald-500/8 blur-[120px]"></div>
+    </div>
 
     <!-- NAVBAR -->
     <nav class="sticky top-0 z-50 bg-[#0b0f19]/80 backdrop-blur-xl border-b border-slate-800/60 py-3.5 px-4 md:px-6">
