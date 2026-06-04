@@ -36,6 +36,8 @@
         </header>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-5 pt-2">
+            
+            <!-- GAME 1: MEMORY CARDS -->
             <button onclick="launchGame('memory')" class="group text-left bg-slate-900/40 border border-slate-800/80 p-5 rounded-2xl hover:border-purple-500/60 hover:shadow-[0_0_20px_rgba(168,85,247,0.15)] transition-all duration-300 cursor-pointer flex flex-col justify-between gap-6 relative overflow-hidden">
                 <div class="w-12 h-12 rounded-xl bg-purple-500/10 flex items-center justify-center text-purple-400 group-hover:bg-purple-500/20 transition-colors"><i class="fa-solid fa-brain text-xl"></i></div>
                 <div>
@@ -45,6 +47,7 @@
                 </div>
             </button>
 
+            <!-- GAME 2: CYBER FLAPPY BIRD -->            
             <button onclick="launchGame('bird')" class="group text-left bg-slate-900/40 border border-slate-800/80 p-5 rounded-2xl hover:border-cyan-500/60 hover:shadow-[0_0_20px_rgba(34,211,238,0.15)] transition-all duration-300 cursor-pointer flex flex-col justify-between gap-6 relative overflow-hidden">
                 <div class="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-400 group-hover:bg-cyan-500/20 transition-colors"><i class="fa-solid fa-dove text-xl"></i></div>
                 <div>
@@ -54,6 +57,7 @@
                 </div>
             </button>
 
+            <!-- GAME 3: 2048 MATRIX -->
             <button onclick="launchGame('game2048')" class="group text-left bg-slate-900/40 border border-slate-800/80 p-5 rounded-2xl hover:border-amber-500/60 hover:shadow-[0_0_20px_rgba(245,158,11,0.15)] transition-all duration-300 cursor-pointer flex flex-col justify-between gap-6 relative overflow-hidden">
                 <div class="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center text-amber-400 group-hover:bg-amber-500/20 transition-colors"><i class="fa-solid fa-cubes text-xl"></i></div>
                 <div>
@@ -63,12 +67,23 @@
                 </div>
             </button>
 
+            <!-- GAME 4: CYBER SPACESHIP -->
             <button onclick="launchGame('shooter')" class="group text-left bg-slate-900/40 border border-slate-800/80 p-5 rounded-2xl hover:border-red-500/60 hover:shadow-[0_0_20px_rgba(239,68,68,0.15)] transition-all duration-300 cursor-pointer flex flex-col justify-between gap-6 relative overflow-hidden">
                 <div class="w-12 h-12 rounded-xl bg-red-500/10 flex items-center justify-center text-red-400 group-hover:bg-red-500/20 transition-colors"><i class="fa-solid fa-jet-fighter text-xl"></i></div>
                 <div>
                     <span class="text-[10px] font-bold font-digital tracking-widest text-red-400 bg-red-500/10 px-2 py-0.5 rounded">DRAG TO FLY</span>
                     <h3 class="font-extrabold text-white text-lg mt-2 group-hover:text-red-400 transition-colors">4. Chiến Cơ Vũ Trụ</h3>
                     <p class="text-xs text-slate-500 mt-1">Giữ và di ngón tay để lái chiến cơ nã đạn hủy diệt quái vật vũ trụ. Hiệu ứng bùng nổ sống động.</p>
+                </div>
+            </button>
+
+            <!-- GAME 5: CYBER SNAKE -->
+            <button onclick="launchGame('snake')" class="group text-left bg-slate-900/40 border border-slate-800/80 p-5 rounded-2xl hover:border-emerald-500/60 hover:shadow-[0_0_20px_rgba(16,185,129,0.15)] transition-all duration-300 cursor-pointer flex flex-col justify-between gap-6 relative overflow-hidden">
+                <div class="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 group-hover:bg-emerald-500/20 transition-colors"><i class="fa-solid fa-gamepad text-xl"></i></div>
+                <div>
+                    <span class="text-[10px] font-bold font-digital tracking-widest text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded">4-WAY CONTROL</span>
+                    <h3 class="font-extrabold text-white text-lg mt-2 group-hover:text-emerald-400 transition-colors">5. Rắn Săn Mồi Cyber</h3>
+                    <p class="text-xs text-slate-500 mt-1">Điều khiển rắn ăn các lõi năng lượng màu xanh lá. Càng ăn nhiều rắn càng dài ra và chạy nhanh hơn.</p>
                 </div>
             </button>
         </div>
@@ -210,7 +225,12 @@
                 title.innerText = "CHIẾN CƠ VŨ TRỤ"; title.className = "text-2xl font-black text-red-400";
                 desc.innerText = "ẤN GIỮ & KÉO ngón tay trực tiếp lên chiến cơ để di chuyển né tránh quái vật. Hệ thống vũ khí Laser tối tân sẽ tự động bắn trả!";
                 startBtn.onclick = () => startShooterGame();
+            } else if(gameId === 'snake') {
+                title.innerText = "RẮN SĂN MỒI CYBER"; title.className = "text-2xl font-black text-emerald-400";
+                desc.innerText = "Sử dụng các PHÍM MŨI TÊN (Máy tính) hoặc CHẠM VÀO NỬA TRÁI/PHẢI MÀN HÌNH (Điện thoại) để điều khiển hướng đi của Rắn. Né các bức tường năng lượng!";
+                startBtn.onclick = () => startSnakeGame();
             }
+            
         }
 
         function createExplosion(x, y, color, count=10) {
@@ -638,6 +658,110 @@
                 gameLoopId = requestAnimationFrame(loop);
             }
             loop();
+        }
+        // =====================================================================
+        // GAME 5: RẮN SĂN MỒI CYBER (SNAKE GAME)
+        // =====================================================================
+        let snake, food, dx, dy, snakeTimer, snakeScore;
+        
+        function startSnakeGame() {
+            document.getElementById('game-overlay').classList.add('hidden');
+            if (gameLoopId) cancelAnimationFrame(gameLoopId);
+            isGameRunning = true; particles = [];
+            
+            // Khởi tạo rắn ở giữa màn hình, hướng đi sang phải
+            snake = [{x: 200, y: 300}, {x: 180, y: 300}, {x: 160, y: 300}];
+            dx = 20; dy = 0; snakeScore = 0; snakeTimer = 0;
+            generateSnakeFood();
+        
+            // Hệ thống điều khiển: Chạm vào 4 góc màn hình để rẽ hướng trên Mobile
+            canvas.onmousedown = (e) => handleSnakeControl(e.clientX, e.clientY);
+            canvas.ontouchstart = (e) => { e.preventDefault(); handleSnakeControl(e.touches[0].clientX, e.touches[0].clientY); };
+            
+            // Điều khiển bằng phím mũi tên trên Máy tính
+            window.onkeydown = (e) => {
+                if (!isGameRunning) return;
+                if (e.code === 'ArrowLeft' && dx === 0) { dx = -20; dy = 0; }
+                if (e.code === 'ArrowRight' && dx === 0) { dx = 20; dy = 0; }
+                if (e.code === 'ArrowUp' && dy === 0) { dx = 0; dy = -20; }
+                if (e.code === 'ArrowDown' && dy === 0) { dx = 0; dy = 20; }
+            };
+        
+            function loop() {
+                if (!isGameRunning) return;
+                
+                snakeTimer++;
+                // Khống chế tốc độ chạy của rắn (cứ sau 7 khung hình thì nhích 1 bước)
+                if (snakeTimer >= 7) {
+                    snakeTimer = 0;
+                    
+                    // Di chuyển đầu rắn
+                    const head = {x: snake[0].x + dx, y: snake[0].y + dy};
+                    snake.unshift(head);
+        
+                    // Kiểm tra ăn mồi
+                    if (head.x === food.x && head.y === food.y) {
+                        snakeScore += 10;
+                        updateScore(snakeScore);
+                        createExplosion(food.x + 10, food.y + 10, '#10b981', 12);
+                        generateSnakeFood();
+                    } else {
+                        snake.pop(); // Không ăn mồi thì cắt đuôi để giữ nguyên độ dài
+                    }
+        
+                    // Kiểm tra đâm tường hoặc tự cắn đuôi
+                    if (head.x < 0 || head.x >= canvas.width || head.y < 0 || head.y >= canvas.height || checkSnakeCollision(head)) {
+                        triggerGameOver();
+                        return;
+                    }
+                }
+        
+                // Vẽ giao diện game
+                ctx.fillStyle = '#030712'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Vẽ thức ăn (Quả táo Neon)
+                ctx.save(); ctx.shadowBlur = 10; ctx.shadowColor = '#10b981';
+                ctx.fillStyle = '#10b981'; ctx.beginPath(); ctx.arc(food.x + 10, food.y + 10, 8, 0, Math.PI * 2); ctx.fill(); ctx.restore();
+        
+                // Vẽ thân rắn
+                snake.forEach((part, index) => {
+                    ctx.save();
+                    if (index === 0) {
+                        ctx.fillStyle = '#34d399'; ctx.shadowBlur = 8; ctx.shadowColor = '#34d399'; // Đầu rắn sáng hơn
+                    } else {
+                        ctx.fillStyle = '#047857';
+                    }
+                    ctx.beginPath(); ctx.roundRect(part.x + 1, part.y + 1, 18, 18, 4); ctx.fill(); ctx.restore();
+                });
+        
+                updateAndRenderParticles();
+                gameLoopId = requestAnimationFrame(loop);
+            }
+            loop();
+        }
+        
+        function generateSnakeFood() {
+            food = {
+                x: Math.floor(Math.random() * (canvas.width / 20)) * 20,
+                y: Math.floor(Math.random() * (canvas.height / 20)) * 20
+            };
+        }
+        
+        function checkSnakeCollision(head) {
+            for (let i = 1; i < snake.length; i++) {
+                if (snake[i].x === head.x && snake[i].y === head.y) return true;
+            }
+            return false;
+        }
+        
+        function handleSnakeControl(clientX, clientY) {
+            let rect = canvas.getBoundingClientRect();
+            let mX = (clientX - rect.left) * (canvas.width / rect.width);
+            let mY = (clientY - rect.top) * (canvas.height / rect.height);
+            
+            // Chia màn hình làm 4 vùng để nhận diện hướng rẽ trên điện thoại
+            if (mX < canvas.width / 2 && dx === 0) { dx = -20; dy = 0; } // Chạm bên trái
+            else if (mX > canvas.width / 2 && dx === 0) { dx = 20; dy = 0; } // Chạm bên phải
         }
     </script>
 </body>
