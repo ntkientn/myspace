@@ -8,6 +8,25 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* Hiệu ứng sóng radar mượt mà cho PM Track */
+        @keyframes custom-radar {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(2.2); opacity: 0; }
+        }
+        /* Hiệu ứng sóng dịu nhẹ, biên độ nhỏ cho Technical Foundation trong quá khứ */
+        @keyframes past-radar {
+            0% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(1.6); opacity: 0; }
+        }
+        .animate-radar-smooth {
+            animation: custom-radar 2.5s cubic-bezier(0.25, 0, 0, 1) infinite;
+        }
+        .animate-past-smooth {
+            animation: past-radar 3s cubic-bezier(0.25, 0, 0, 1) infinite;
+        }
+    </style>
 </head>
 
 <body class="bg-[#0b0f19] text-slate-300 font-sans antialiased selection:bg-indigo-500 selection:text-white text-[17px] md:text-lg relative w-full overflow-x-hidden">
@@ -172,11 +191,11 @@
             
             <!-- ====== SECTION 1: PROJECT MANAGEMENT EXPERIENCE ====== -->
             <div class="relative pl-8 group">
-                <div class="absolute -left-[11px] top-2 w-5 h-5 rounded-full bg-gradient-to-r from-cyan-400 to-indigo-500 ring-4 ring-[#0b0f19] z-10 transition-all duration-300 group-hover:scale-125 shadow-[0_0_15px_#22d3ee]">
-                    <!-- Vòng sóng radar lan tỏa ra ngoài rõ rệt -->
-                    <div class="absolute inset-0 rounded-full bg-cyan-400 animate-ping opacity-75 scale-150"></div>
-                    <!-- Tâm điểm sáng cố định ở giữa -->
-                    <div class="absolute inset-1 rounded-full bg-white shadow-inner"></div>
+                <div class="absolute -left-[11px] top-2 w-5 h-5 rounded-full bg-gradient-to-r from-indigo-500 to-purple-500 ring-4 ring-[#0b0f19] z-10 transition-all duration-300 group-hover:scale-125 shadow-[0_0_12px_rgba(99,102,241,0.5)]">
+                    <!-- Vòng sóng tỏa mịn và chậm -->
+                    <div class="absolute inset-0 rounded-full bg-indigo-500/40 animate-radar-smooth"></div>
+                    <!-- Tâm điểm sáng dịu -->
+                    <div class="absolute inset-1.5 rounded-full bg-slate-100 shadow-inner"></div>
                 </div>
                 
                 <span data-i18n="role1-time" class="text-xs text-indigo-400 font-bold uppercase tracking-wider bg-indigo-950/60 border border-indigo-900 px-2 py-0.5 rounded">Project Management Track</span>
@@ -245,12 +264,12 @@
             <!-- ====== SECTION 2: TECHNICAL FOUNDATION ROLE ====== -->
             <div class="relative pl-8 group">
                 
-                <div class="absolute -left-[11px] top-2 w-5 h-5 rounded-full bg-gradient-to-r from-emerald-400 to-teal-500 ring-4 ring-[#0b0f19] z-10 transition-all duration-300 group-hover:scale-125 shadow-[0_0_15px_#34d399]">
-                    <!-- Vòng sóng radar lan tỏa cho track kỹ thuật -->
-                    <div class="absolute inset-0 rounded-full bg-emerald-400 animate-ping opacity-60 scale-150"></div>
-                    <!-- Tâm điểm sáng cố định ở giữa -->
-                    <div class="absolute inset-1 rounded-full bg-white shadow-inner"></div>
-                </div>          
+                <div class="absolute -left-[11px] top-2 w-5 h-5 rounded-full bg-slate-600 ring-4 ring-[#0b0f19] z-10 transition-all duration-300 group-hover:scale-125 shadow-[0_0_8px_rgba(148,163,184,0.3)]">
+                    <!-- Vòng sóng quá khứ: tỏa cực nhẹ, mờ và chậm rãi -->
+                    <div class="absolute inset-0 rounded-full bg-slate-500/20 animate-past-smooth"></div>
+                    <!-- Tâm điểm màu slate trầm hơn, đúng chất foundation -->
+                    <div class="absolute inset-1.5 rounded-full bg-slate-400/80 shadow-inner"></div>
+                </div>         
                 
                 <span data-i18n="role2-time" class="text-xs text-slate-400 font-bold uppercase tracking-wider bg-slate-800/80 border border-slate-700 px-2 py-0.5 rounded">Technical Foundation</span>
                 <h3 data-i18n="role2-title" class="text-base md:text-lg font-bold text-slate-300 mt-2 tracking-tight">Software Developer & QA/QC Engineer</h3>
