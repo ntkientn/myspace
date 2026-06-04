@@ -254,6 +254,14 @@
         function triggerGameOver() {
             isGameRunning = false;
             if (gameLoopId) cancelAnimationFrame(gameLoopId);
+            
+            // GIẢI PHÓNG MÀN HÌNH MOBILE: Xóa bỏ các bộ lắng nghe sự kiện để tránh treo đơ click
+            canvas.ontouchstart = null;
+            canvas.ontouchmove = null;
+            canvas.ontouchend = null;
+            canvas.onmousemove = null;
+            canvas.onmousedown = null;
+
             const overlay = document.getElementById('game-overlay');
             const title = document.getElementById('overlay-title');
             const desc = document.getElementById('overlay-desc');
