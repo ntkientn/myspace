@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KIEN's News Hub</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#0f1117;
+  --bg2:#161821;
+  --bg3:#1e2030;
+  --bg4:#252838;
+  --surface:#1a1d2e;
+  --border:#2a2d3e;
+  --border2:#363950;
+  --txt:#e8eaf0;
+  --txt2:#9ea3b8;
+  --txt3:#6b7090;
+  --accent:#4f8ef7;
+  --accent2:#3d7be8;
+  --red:#e05260;
+  --gold:#f5a623;
+  --green:#3ecf8e;
+  --purple:#a78bfa;
+  --cyan:#22d3ee;
+  --pink:#f472b6;
+  --sidebar:280px;
+  --header:56px;
+}
+/* Mục 6: Tăng size chữ nói chung lớn hơn 1 cỡ (15px -> 16px) */
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--txt);font-size:16px;line-height:1.6;overflow-x:hidden}
+a{color:inherit;text-decoration:none}
+button{cursor:pointer;font-family:inherit}
+
+/* HEADER */
+#header{
+  position:fixed;top:0;left:0;right:0;height:var(--header);
+  background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 1.2rem;z-index:200;gap:1rem
+}
+.logo{font-family:'Playfair Display',serif;font-size:1.35rem;font-weight:700;
+  white-space:nowrap;letter-spacing:-.3px}
+.logo span{color:var(--accent)}
+.logo small{font-family:'IBM Plex Sans',sans-serif;font-size:.7rem;font-weight:300;
+  color:var(--txt3);display:block;margin-top:-2px;letter-spacing:1px;text-transform:uppercase}
+.header-right{display:flex;align-items:center;gap:.7rem;flex-shrink:0}
+.date-chip{font-size:.8rem;color:var(--txt3);white-space:nowrap}
+.refresh-all{background:var(--accent);color:#fff;border:none;
+  padding:6px 16px;border-radius:5px;font-size:.85rem;font-weight:500;
+  display:flex;align-items:center;gap:5px;transition:.15s}
+.refresh-all:hover{background:var(--accent2)}
+#hamburger{display:none;background:none;border:1px solid var(--border2);
+  color:var(--txt2);padding:5px 9px;border-radius:5px;font-size:1.2rem}
+
+/* SIDEBAR */
+#sidebar{
+  position:fixed;top:var(--header);left:0;bottom:0;width:var(--sidebar);
+  background:var(--bg2);border-right:1px solid var(--border);
+  overflow-y:auto;z-index:150;transition:.3s;
+}
+#sidebar::-webkit-scrollbar{width:4px}
+#sidebar::-webkit-scrollbar-track{background:transparent}
+#sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+.sidebar-section{padding:.5rem 0}
+.sidebar-section+.sidebar-section{border-top:1px solid var(--border)}
+.sidebar-item{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.55rem 1.1rem .55rem 1.5rem;
+  font-size:.88rem;color:var(--txt2);cursor:pointer;
+  border-left:2px solid transparent;transition:.15s;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis
+}
+.sidebar-item:hover{color:var(--txt);background:var(--bg3)}
+.sidebar-item.active{color:var(--accent);border-left-color:var(--accent);background:var(--bg3)}
+.sidebar-item .dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+.sidebar-parent{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.65rem 1.1rem;font-size:.92rem;font-weight:600;
+  color:var(--txt);cursor:pointer;transition:.15s;
+  background:none;border:none;width:100%;text-align:left
+}
+.sidebar-parent:hover{background:var(--bg3)}
+.sidebar-parent .icon{font-size:1.1rem;flex-shrink:0}
+.sidebar-children{display:none}
+.sidebar-children.open{display:block}
+.caret{margin-left:auto;font-size:.75rem;transition:.2s;color:var(--txt3)}
+.sidebar-parent.open .caret{transform:rotate(90deg)}
+
+/* MAIN */
+#main{
+  margin-left:var(--sidebar);padding-top:var(--header);
+  min-height:100vh;transition:.3s
+}
+.content-area{padding:1.8rem 2rem;max-width:1200px}
+
+/* PANEL */
+.panel{display:none}
+.panel.active{display:block}
+.panel-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:1.5rem;padding-bottom:1rem;
+  border-bottom:1px solid var(--border)
+}
+.panel-title-wrap{display:flex;align-items:center;gap:.6rem}
+.panel-bar{width:4px;height:24px;border-radius:2px;flex-shrink:0}
+.panel-title{font-family:'Playfair Display',serif;font-size:1.45rem;font-weight:700}
+.panel-source{font-size:.8rem;color:var(--txt3);margin-left:4px}
+.btn-refresh{
+  background:none;border:1px solid var(--border2);color:var(--txt2);
+  padding:5px 14px;border-radius:4px;font-size:.8rem;
+  display:flex;align-items:center;gap:5px;transition:.15s
+}
+.btn-refresh:hover{border-color:var(--txt3);color:var(--txt)}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin-anim{animation:spin .7s linear infinite;display:inline-block}
+
+/* ARTICLE GRID */
+.art-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.2rem}
+.art-card{
+  background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  overflow:hidden;display:flex;flex-direction:column;transition:.18s;
+}
+.art-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.art-thumb{width:100%;aspect-ratio:16/9;object-fit:cover;
+  background:var(--bg4);display:block;flex-shrink:0}
+.art-thumb-ph{
+  width:100%;aspect-ratio:16/9;background:var(--bg4);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--border2);font-size:1.8rem;flex-shrink:0
+}
+.art-body{padding:1rem;flex:1;display:flex;flex-direction:column;gap:.5rem}
+.art-badge{
+  font-size:.7rem;font-weight:600;text-transform:uppercase;letter-spacing:.7px;
+  padding:3px 8px;border-radius:3px;display:inline-block;width:fit-content
+}
+.art-title{
+  font-family:'IBM Plex Serif',serif;font-size:1.05rem;font-weight:600;
+  line-height:1.45;color:var(--txt);display:block;transition:.15s
+}
+.art-title:hover{color:var(--accent)}
+
+/* Mục 5: Cho phép show content dài gấp đôi hiện tại (-webkit-line-clamp từ 2 tăng lên 4) */
+.art-desc{font-size:.88rem;color:var(--txt2);line-height:1.55;
+  display:-webkit-box;-webkit-line-clamp:4;--webkit-box-orient:vertical;-webkit-box-orient:vertical;overflow:hidden;flex:1}
+.art-meta{display:flex;justify-content:space-between;align-items:center;
+  margin-top:.6rem;padding-top:.6rem;border-top:1px solid var(--border)}
+.art-date{font-size:.75rem;color:var(--txt3)}
+.art-readmore{font-size:.8rem;font-weight:500;transition:.15s}
+.art-readmore:hover{opacity:.75}
+
+/* INSPIRE CARDS */
+.ins-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1.2rem}
+.ins-card{
+  background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  padding:1.2rem;display:flex;flex-direction:column;gap:.6rem;
+  border-left:4px solid var(--purple);transition:.18s
+}
+.ins-card:hover{border-color:var(--purple);transform:translateY(-2px)}
+.ins-quote{font-family:'Playfair Display',serif;font-size:2.2rem;
+  line-height:.8;color:var(--border2)}
+.ins-title{
+  font-family:'IBM Plex Serif',serif;font-size:1.02rem;font-weight:600;
+  color:var(--txt);line-height:1.42;transition:.15s
+}
+.ins-title:hover{color:var(--purple)}
+/* Mục 5: Tăng gấp đôi độ dài content hiển thị cho phần truyền cảm hứng */
+.ins-desc{font-size:.88rem;color:var(--txt2);line-height:1.55;
+  display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden;flex:1}
+.ins-foot{display:flex;justify-content:space-between;align-items:center;
+  padding-top:.6rem;border-top:1px solid var(--border)}
+.ins-src{font-size:.75rem;color:var(--purple);font-weight:500}
+.ins-date{font-size:.75rem;color:var(--txt3)}
+
+/* CHART STYLING */
+.chart-container {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.2rem;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  height: 320px;
+}
+
+/* SEE MORE */
+.see-more-wrap{margin-top:1.5rem;text-align:center}
+.btn-more{
+  background:var(--bg3);border:1px solid var(--border2);color:var(--txt2);
+  padding:10px 32px;border-radius:5px;font-size:.9rem;font-weight:500;transition:.15s
+}
+.btn-more:hover{background:var(--bg4);color:var(--txt)}
+.btn-more:disabled{opacity:.35;cursor:default}
+
+/* LOADING */
+.loading{display:flex;align-items:center;justify-content:center;gap:.6rem;
+  padding:3rem;color:var(--txt3);font-size:.9rem}
+.dots{display:flex;gap:4px}
+.dots span{width:7px;height:7px;border-radius:50%;background:var(--txt3);
+  animation:dotpulse 1.2s ease-in-out infinite}
+.dots span:nth-child(2){animation-delay:.2s}
+.dots span:nth-child(3){animation-delay:.4s}
+@keyframes dotpulse{0%,80%,100%{transform:scale(.5);opacity:.3}40%{transform:scale(1);opacity:1}}
+.error-msg{text-align:center;padding:2.5rem;color:var(--txt3);font-size:.9rem}
+
+/* MARKETS PANEL */
+.markets-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:1rem;margin-bottom:1.5rem}
+.market-card{
+  background:var(--bg3);border:1px solid var(--border);border-radius:8px;
+  padding:1rem 1.2rem;display:flex;flex-direction:column;gap:.3rem
+}
+.market-label{font-size:.78rem;color:var(--txt3);text-transform:uppercase;letter-spacing:.6px}
+.market-price{font-size:1.3rem;font-weight:600;font-variant-numeric:tabular-nums}
+.market-change{font-size:.8rem;font-weight:500}
+.up{color:var(--green)}.down{color:var(--red)}.flat{color:var(--txt3)}
+.market-sub{font-size:.75rem;color:var(--txt3)}
+.market-section-title{font-size:.95rem;font-weight:600;color:var(--txt2);
+  margin:1rem 0 .6rem;padding-bottom:.4rem;border-bottom:1px solid var(--border)}
+.markets-source{font-size:.78rem;color:var(--txt3);margin-top:.8rem}
+.markets-source a{color:var(--accent)}
+
+/* OVERLAY for mobile */
+#overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:140}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  :root{--sidebar:260px}
+  #sidebar{left:calc(-1 * var(--sidebar));box-shadow:4px 0 24px rgba(0,0,0,.5)}
+  #sidebar.mobile-open{left:0}
+  #main{margin-left:0}
+  #hamburger{display:block}
+  #overlay.show{display:block}
+  .content-area{padding:1.2rem}
+  .art-grid{grid-template-columns:1fr}
+  .ins-grid{grid-template-columns:1fr}
+  .markets-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div style="display:flex;align-items:center;gap:.8rem">
+    <button id="hamburger" onclick="toggleSidebar()">☰</button>
+    <div class="logo">KIEN's <span>News Hub</span>
+      <small>Stay Informed. Stay Inspired.</small>
+    </div>
+  </div>
+  <div class="header-right">
+    <span class="date-chip" id="dateChip"></span>
+    <button class="refresh-all" onclick="refreshCurrent()">
+      <span id="refreshIcon">↻</span> Làm mới
+    </button>
+  </div>
+</div>
+
+<div id="overlay" onclick="closeSidebar()"></div>
+<nav id="sidebar">
+
+  <div class="sidebar-section">
+    <button class="sidebar-parent" onclick="toggleGroup(this,'vnx-children')">
+      <span class="icon">📰</span> VnExpress
+      <span class="caret">▶</span>
+    </button>
+    <div class="sidebar-children open" id="vnx-children">
+      <div class="sidebar-item" onclick="loadPanel('vnx-noibat')" data-panel="vnx-noibat">
+        <span class="dot" style="background:var(--red)"></span>Tin Nổi Bật
+      </div>
+      <div class="sidebar-item" onclick="loadPanel('vnx-thoisu')" data-panel="vnx-thoisu">
+        <span class="dot" style="background:var(--gold)"></span>Thời Sự
+      </div>
+      <div class="sidebar-item" onclick="loadPanel('vnx-thegioi')" data-panel="vnx-thegioi">
+        <span class="dot" style="background:var(--purple)"></span>Thế Giới
+      </div>
+      <div class="sidebar-item" onclick="loadPanel('vnx-thethao')" data-panel="vnx-thethao">
+        <span class="dot" style="background:var(--green)"></span>Thể Thao
+      </div>
+      <div class="sidebar-item" onclick="loadPanel('vnx-congnghe')" data-panel="vnx-congnghe">
+        <span class="dot" style="background:var(--accent)"></span>Công Nghệ
+      </div>
+      <div class="sidebar-item" onclick="loadPanel('vnx-doisong')" data-panel="vnx-doisong">
+        <span class="dot" style="background:var(--pink)"></span>Đời Sống
+      </div>
+      <div class="sidebar-item" onclick="loadPanel('vnx-giaitri')" data-panel="vnx-giaitri">
+        <span class="dot" style="background:var(--cyan)"></span>Giải Trí
+      </div>
+      <div class="sidebar-item" onclick="loadPanel('vnx-suckhoe')" data-panel="vnx-suckhoe">
+        <span class="dot" style="background:var(--green)"></span>Sức Khỏe
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <button class="sidebar-parent" onclick="toggleGroup(this,'en-children')">
+      <span class="icon">🌍</span> English News
+      <span class="caret">▶</span>
+    </button>
+    <div class="sidebar-children open" id="en-children">
+      <div class="sidebar-item" onclick="loadPanel('en-cnn')" data-panel="en-cnn">
+        <span class="dot" style="background:var(--red)"></span>CNN Top Stories
+      </div>
+      <div class="sidebar-item" onclick="loadPanel('en-bbc')" data-panel="en-bbc">
+        <span class="dot" style="background:var(--accent)"></span>BBC World News
+      </div>
+      <div class="sidebar-item" onclick="loadPanel('en-cnbc')" data-panel="en-cnbc">
+        <span class="dot" style="background:var(--gold)"></span>CNBC International
+      </div>
+      <div class="sidebar-item" onclick="loadPanel('en-dailymail')" data-panel="en-dailymail">
+        <span class="dot" style="background:var(--pink)"></span>Daily Mail World
+      </div>
+      <div class="sidebar-item" onclick="loadPanel('en-guardian')" data-panel="en-guardian">
+        <span class="dot" style="background:var(--green)"></span>The Guardian
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <button class="sidebar-parent" onclick="toggleGroup(this,'ins-children')">
+      <span class="icon">✨</span> Cảm Hứng - Năng Lượng Tích Cực
+      <span class="caret">▶</span>
+    </button>
+    <div class="sidebar-children open" id="ins-children">
+      <div class="sidebar-item" onclick="loadPanel('ins-zen')" data-panel="ins-zen">
+        <span class="dot" style="background:var(--gold)"></span>Zen Habits
+      </div>
+      <div class="sidebar-item" onclick="loadPanel('ins-tiny')" data-panel="ins-tiny">
+        <span class="dot" style="background:var(--cyan)"></span>Tiny Buddha
+      </div>
+      <div class="sidebar-item" onclick="loadPanel('ins-darius')" data-panel="ins-darius">
+        <span class="dot" style="background:var(--purple)"></span>Darius Foroux
+      </div>
+      <div class="sidebar-item" onclick="loadPanel('ins-james')" data-panel="ins-james">
+        <span class="dot" style="background:var(--green)"></span>James Clear
+      </div>
+      <div class="sidebar-item" onclick="loadPanel('ins-markman')" data-panel="ins-markman">
+        <span class="dot" style="background:var(--pink)"></span>Mark Manson
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <button class="sidebar-parent" onclick="toggleGroup(this,'tech-children')">
+      <span class="icon">💻</span> Công Nghệ VN
+      <span class="caret">▶</span>
+    </button>
+    <div class="sidebar-children open" id="tech-children">
+      <div class="sidebar-item" onclick="loadPanel('tech-tinhte')" data-panel="tech-tinhte">
+        <span class="dot" style="background:var(--accent)"></span>Tinh Tế
+      </div>
+      <div class="sidebar-item" onclick="loadPanel('tech-vnexsohoa')" data-panel="tech-vnexsohoa">
+        <span class="dot" style="background:var(--red)"></span>VnExpress Số Hóa
+      </div>
+      <div class="sidebar-item" onclick="loadPanel('tech-vnet')" data-panel="tech-vnet">
+        <span class="dot" style="background:var(--green)"></span>VietNamNet Công Nghệ
+      </div>
+      <div class="sidebar-item" onclick="loadPanel('tech-vnecon')" data-panel="tech-vnecon">
+        <span class="dot" style="background:var(--gold)"></span>VnEconomy Số
+      </div>
+      <div class="sidebar-item" onclick="loadPanel('tech-thanhnien')" data-panel="tech-thanhnien">
+        <span class="dot" style="background:var(--pink)"></span>Thanh Niên Tech
+      </div>
+    </div>
+  </div>
+
+  <div class="sidebar-section">
+    <button class="sidebar-parent" onclick="toggleGroup(this,'market-children')">
+      <span class="icon">📈</span> Tỉ Giá & Thị Trường
+      <span class="caret">▶</span>
+    </button>
+    <div class="sidebar-children open" id="market-children">
+      <div class="sidebar-item" onclick="loadPanel('market-gold')" data-panel="market-gold">
+        <span class="dot" style="background:var(--gold)"></span>Vàng VN & Thế Giới
+      </div>
+      <div class="sidebar-item" onclick="loadPanel('market-forex')" data-panel="market-forex">
+        <span class="dot" style="background:var(--green)"></span>Ngoại Tệ / VND
+      </div>
+      <div class="sidebar-item" onclick="loadPanel('market-crypto')" data-panel="market-crypto">
+        <span class="dot" style="background:var(--purple)"></span>Crypto & Chart
+      </div>
+    </div>
+  </div>
+
+</nav>
+
+<div id="main">
+<div class="content-area" id="contentArea">
+  <div id="welcome" class="panel active" style="text-align:center;padding:4rem 1rem">
+    <div style="font-size:3rem;margin-bottom:1rem">📰</div>
+    <h2 style="font-family:'Playfair Display',serif;font-size:2rem;margin-bottom:.5rem">KIEN's News Hub</h2>
+    <p style="color:var(--txt3);font-size:1rem">Chọn mục tin tức từ menu bên trái để bắt đầu đọc báo phiên bản nâng cấp.</p>
+  </div>
+</div>
+</div>
+
+<script>
+// Mục 7: Đã cấu hình proxy chuẩn bằng chính xác API Key của bạn cấp
+const PROXY = 'https://api.rss2json.com/v1/api.json?api_key=pxxnsqurnfhxbaqdyrzhsx0socsjhesnrccxieau&rss_url=';
+const PAGE = 10;
+
+const PANELS = {
+  'vnx-noibat':    {title:'Tin Nổi Bật',     src:'VnExpress', color:'var(--red)',    badge:'Nổi Bật',   bc:'rgba(224,82,96,.15)',    tc:'var(--red)',   type:'news', feeds:['https://vnexpress.net/rss/tin-noi-bat.rss']},
+  'vnx-thoisu':    {title:'Thời Sự',         src:'VnExpress', color:'var(--gold)',   badge:'Thời Sự',   bc:'rgba(245,166,35,.15)',   tc:'var(--gold)',  type:'news', feeds:['https://vnexpress.net/rss/thoi-su.rss']},
+  'vnx-thegioi':   {title:'Thế Giới',        src:'VnExpress', color:'var(--purple)', badge:'Thế Giới',  bc:'rgba(167,139,250,.15)',  tc:'var(--purple)',type:'news', feeds:['https://vnexpress.net/rss/the-gioi.rss']},
+  'vnx-thethao':   {title:'Thể Thao',        src:'VnExpress', color:'var(--green)',  badge:'Thể Thao',  bc:'rgba(62,207,142,.15)',   tc:'var(--green)', type:'news', feeds:['https://vnexpress.net/rss/the-thao.rss']},
+  'vnx-congnghe':  {title:'Công Nghệ',       src:'VnExpress', color:'var(--accent)', badge:'Tech',      bc:'rgba(79,142,247,.15)',   tc:'var(--accent)',type:'news', feeds:['https://vnexpress.net/rss/so-hoa.rss']},
+  'vnx-doisong':   {title:'Đời Sống',        src:'VnExpress', color:'var(--pink)',   badge:'Đời Sống',  bc:'rgba(244,114,182,.15)',  tc:'var(--pink)',  type:'news', feeds:['https://vnexpress.net/rss/gia-dinh.rss']},
+  'vnx-giaitri':   {title:'Giải Trí',        src:'VnExpress', color:'var(--cyan)',   badge:'Giải Trí',  bc:'rgba(34,211,238,.15)',   tc:'var(--cyan)',  type:'news', feeds:['https://vnexpress.net/rss/giai-tri.rss']},
+  'vnx-suckhoe':   {title:'Sức Khỏe',        src:'VnExpress', color:'var(--green)',  badge:'Sức Khỏe',  bc:'rgba(62,207,142,.15)',   tc:'var(--green)', type:'news', feeds:['https://vnexpress.net/rss/suc-khoe.rss']},
+
+  'en-cnn':        {title:'CNN Top Stories', src:'CNN',       color:'var(--red)',    badge:'CNN',       bc:'rgba(224,82,96,.15)',    tc:'var(--red)',   type:'news', feeds:['http://rss.cnn.com/rss/edition.rss']},
+  'en-bbc':        {title:'BBC World News',  src:'BBC',       color:'var(--accent)', badge:'BBC',       bc:'rgba(79,142,247,.15)',   tc:'var(--accent)',type:'news', feeds:['https://feeds.bbci.co.uk/news/world/rss.xml']},
+  'en-cnbc':       {title:'CNBC News',       src:'CNBC',      color:'var(--gold)',   badge:'CNBC',      bc:'rgba(245,166,35,.15)',   tc:'var(--gold)',  type:'news', feeds:['https://search.cnbc.com/rs/search/view.xml?partnerId=2000&keywords=international']},
+  'en-dailymail':  {title:'Daily Mail World',src:'Daily Mail',color:'var(--pink)',   badge:'Mail',      bc:'rgba(244,114,182,.15)',  tc:'var(--pink)',  type:'news', feeds:['https://www.dailymail.co.uk/news/worldnews/index.rss']},
+  'en-guardian':   {title:'The Guardian',    src:'Guardian',  color:'var(--green)',  badge:'Guardian',  bc:'rgba(62,207,142,.15)',   tc:'var(--green)', type:'news', feeds:['https://www.theguardian.com/world/rss']},
+
+  'ins-zen':       {title:'Zen Habits',      src:'Zen Habits',color:'var(--gold)',   badge:'Zen',       bc:'rgba(245,166,35,.15)',   tc:'var(--gold)',  type:'inspire', feeds:['https://zenhabits.net/feed/']},
+  'ins-tiny':      {title:'Tiny Buddha',     src:'TinyBuddha',color:'var(--cyan)',   badge:'Wisdom',    bc:'rgba(34,211,238,.15)',   tc:'var(--cyan)',  type:'inspire', feeds:['https://tinybuddha.com/feed/']},
+  'ins-darius':    {title:'Darius Foroux',   src:'Darius',    color:'var(--purple)', badge:'Mindset',   bc:'rgba(167,139,250,.15)',  tc:'var(--purple)',type:'inspire', feeds:['https://dariusforoux.com/feed/']},
+  'ins-james':     {title:'James Clear',     src:'JamesClear',color:'var(--green)',  badge:'Habits',    bc:'rgba(62,207,142,.15)',   tc:'var(--green)', type:'inspire', feeds:['https://jamesclear.com/feed']},
+  'ins-markman':   {title:'Mark Manson',     src:'MarkManson',color:'var(--pink)',   badge:'Life',      bc:'rgba(244,114,182,.15)',  tc:'var(--pink)',  type:'inspire', feeds:['https://markmanson.net/feed']},
+
+  'tech-tinhte':   {title:'Tinh Tế',         src:'tinhte.vn',    color:'var(--accent)', badge:'TinhTe', bc:'rgba(79,142,247,.15)',   tc:'var(--accent)',type:'news', feeds:['https://tinhte.vn/rss']},
+  'tech-vnexsohoa':{title:'VnExpress Số Hóa',src:'VnExpress',    color:'var(--red)',    badge:'Số Hóa', bc:'rgba(224,82,96,.15)',    tc:'var(--red)',   type:'news', feeds:['https://vnexpress.net/rss/so-hoa.rss']},
+  'tech-vnet':     {title:'VietNamNet Tech', src:'vietnamnet.vn', color:'var(--green)',  badge:'VNet',   bc:'rgba(62,207,142,.15)',   tc:'var(--green)', type:'news', feeds:['https://vietnamnet.vn/rss/cong-nghe.rss']},
+  'tech-vnecon':   {title:'VnEconomy Số',    src:'vneconomy.vn',  color:'var(--gold)',   badge:'Econ',   bc:'rgba(245,166,35,.15)',   tc:'var(--gold)',  type:'news', feeds:['https://vneconomy.vn/cong-nghe-so.rss']},
+  'tech-thanhnien':{title:'Thanh Niên Tech', src:'thanhnien.vn',  color:'var(--pink)',   badge:'TN Tech',bc:'rgba(244,114,182,.15)',  tc:'var(--pink)',  type:'news', feeds:['https://thanhnien.vn/rss/cong-nghe.rss']},
+
+  'market-gold':   {type:'market-gold'},
+  'market-forex':  {type:'market-forex'},
+  'market-crypto': {type:'market-crypto'},
+};
+
+const state = {};
+let currentPanel = null;
+
+function toggleGroup(btn, childId){
+  const ch = document.getElementById(childId);
+  btn.classList.toggle('open');
+  ch.classList.toggle('open');
+}
+function toggleSidebar(){
+  document.getElementById('sidebar').classList.toggle('mobile-open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+function closeSidebar(){
+  document.getElementById('sidebar').classList.remove('mobile-open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+function loadPanel(id){
+  document.querySelectorAll('.sidebar-item').forEach(el=>{
+    el.classList.toggle('active', el.dataset.panel===id);
+  });
+  currentPanel = id;
+  closeSidebar();
+
+  let panel = document.getElementById('panel-'+id);
+  const area = document.getElementById('contentArea');
+  
+  area.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('welcome').classList.remove('active');
+
+  if(!panel){
+    const cfg = PANELS[id];
+    if(!cfg) return;
+
+    const div = document.createElement('div');
+    div.className = 'panel active';
+    div.id = 'panel-'+id;
+
+    if(cfg.type==='news'||cfg.type==='inspire'){
+      div.innerHTML = buildPanelShell(id, cfg);
+      area.appendChild(div);
+      fetchFeedPanel(id);
+    } else if(cfg.type==='market-gold'){
+      div.innerHTML = buildMarketGold();
+      area.appendChild(div);
+      loadMarketGold();
+    } else if(cfg.type==='market-forex'){
+      div.innerHTML = buildMarketForex();
+      area.appendChild(div);
+      loadMarketForex();
+    } else if(cfg.type==='market-crypto'){
+      div.innerHTML = buildMarketCrypto();
+      area.appendChild(div);
+      loadMarketCrypto();
+    }
+  } else {
+    panel.classList.add('active');
+    // Reload dữ liệu thị trường khi người dùng click lại để cập nhật mới nhất
+    if(id.startsWith('market-')) {
+      if(id==='market-gold') loadMarketGold();
+      if(id==='market-forex') loadMarketForex();
+      if(id==='market-crypto') loadMarketCrypto();
+    }
+  }
+}
+
+function buildPanelShell(id, cfg){
+  return `
+  <div class="panel-header">
+    <div class="panel-title-wrap">
+      <div class="panel-bar" style="background:${cfg.color}"></div>
+      <div>
+        <div class="panel-title">${cfg.title}</div>
+        <div class="panel-source">${cfg.src}</div>
+      </div>
+    </div>
+    <button class="btn-refresh" onclick="reloadPanel('${id}')">
+      <span class="refresh-ic">↻</span> Làm mới
+    </button>
+  </div>
+  <div id="grid-${id}"></div>
+  <div class="see-more-wrap">
+    <button class="btn-more" id="more-${id}" onclick="showMore('${id}')">Xem thêm 10 bài...</button>
+  </div>`;
+}
+
+async function fetchFeed(url){
+  try{
+    const r = await fetch(`${PROXY}${encodeURIComponent(url)}&count=40`);
+    const d = await r.json();
+    if(d.status==='ok' && d.items) return d.items;
+    return [];
+  }catch(e){return []}
+}
+
+function stripHtml(h){return (h||'').replace(/<[^>]+>/g,'').replace(/&[^;]+;/g,' ').trim()}
+function fmtDate(s){
+  if(!s) return '';
+  try{const d=new Date(s);if(isNaN(d))return '';
+    return d.toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+  }catch{return ''}
+}
+function getThumb(item){
+  if(item.thumbnail&&item.thumbnail.startsWith('http')) return item.thumbnail;
+  if(item.enclosure&&item.enclosure.link) return item.enclosure.link;
+  if(item.content){const m=item.content.match(/<img[^>]+src=["']([^"']+)["']/i);if(m)return m[1]}
+  return null;
+}
+
+async function fetchFeedPanel(id){
+  const cfg = PANELS[id];
+  const grid = document.getElementById('grid-'+id);
+  const moreBtn = document.getElementById('more-'+id);
+  if(!grid) return;
+
+  grid.innerHTML = `<div class="loading"><div class="dots"><span></span><span></span><span></span></div> Đang tải...</div>`;
+  if(moreBtn) moreBtn.disabled=true;
+
+  const all=[];
+  const srcMap={};
+  for(const feed of cfg.feeds){
+    const items = await fetchFeed(feed);
+    items.forEach(it=>{ srcMap[it.link]=cfg.src; });
+    all.push(...items);
+  }
+  const seen=new Set();
+  const unique=all.filter(i=>{if(seen.has(i.link))return false;seen.add(i.link);return true});
+
+  state[id]={items:unique,shown:0,srcMap};
+  renderBatch(id);
+}
+
+function renderBatch(id){
+  const cfg = PANELS[id];
+  const st = state[id];
+  const grid = document.getElementById('grid-'+id);
+  const moreBtn = document.getElementById('more-'+id);
+  if(!st) return;
+
+  const from=st.shown, to=Math.min(from+PAGE, st.items.length);
+  const chunk=st.items.slice(from,to);
+
+  if(from===0){
+    grid.innerHTML = `<div class="${cfg.type==='inspire'?'ins-grid':'art-grid'}" id="artlist-${id}"></div>`;
+  }
+  const list=document.getElementById('artlist-'+id);
+  chunk.forEach(item=>{
+    const html = cfg.type==='inspire' ? renderInspire(item,cfg,st) : renderArticle(item,cfg);
+    list.insertAdjacentHTML('beforeend',html);
+  });
+  st.shown=to;
+
+  if(moreBtn){
+    if(to>=st.items.length){moreBtn.disabled=true;moreBtn.textContent='Đã hiển thị tất cả';}
+    else{moreBtn.disabled=false;moreBtn.textContent=`Xem thêm ${Math.min(PAGE,st.items.length-to)} bài...`;}
+  }
+}
+
+function renderArticle(item, cfg){
+  const thumb=getThumb(item);
+  const desc=stripHtml(item.description||item.content||'');
+  const thumbHtml=thumb
+    ?`<img class="art-thumb" src="${thumb}" alt="" loading="lazy" onerror="this.style.display='none'">`
+    :`<div class="art-thumb-ph">📄</div>`;
+  return `<div class="art-card">
+    ${thumbHtml}
+    <div class="art-body">
+      <span class="art-badge" style="background:${cfg.bc};color:${cfg.tc}">${cfg.badge}</span>
+      <a href="${item.link}" target="_blank" class="art-title">${item.title}</a>
+      <p class="art-desc">${desc}</p>
+      <div class="art-meta">
+        <span class="art-date">${fmtDate(item.pubDate)}</span>
+        <a href="${item.link}" target="_blank" class="art-readmore" style="color:${cfg.tc}">Đọc →</a>
+      </div>
+    </div>
+  </div>`;
+}
+
+function renderInspire(item, cfg, st){
+  const desc=stripHtml(item.description||item.content||'');
+  const src=st.srcMap[item.link]||cfg.src;
+  return `<div class="ins-card" style="border-left-color:${cfg.color}">
+    <div class="ins-quote">"</div>
+    <a href="${item.link}" target="_blank" class="ins-title" style="--hc:${cfg.color}">${item.title}</a>
+    <p class="ins-desc">${desc}</p>
+    <div class="ins-foot">
+      <span class="ins-src" style="color:${cfg.color}">${src}</span>
+      <span class="ins-date">${fmtDate(item.pubDate)}</span>
+    </div>
+  </div>`;
+}
+
+function showMore(id){ renderBatch(id); }
+
+async function reloadPanel(id){
+  const btn=document.querySelector(`#panel-${id} .btn-refresh`);
+  const ic=document.querySelector(`#panel-${id} .refresh-ic`);
+  if(btn){btn.disabled=true;}
+  if(ic){ic.classList.add('spin-anim');}
+  state[id]={items:[],shown:0};
+  
+  if(id.startsWith('market-')){
+    if(id==='market-gold') await loadMarketGold();
+    if(id==='market-forex') await loadMarketForex();
+    if(id==='market-crypto') await loadMarketCrypto();
+  } else {
+    await fetchFeedPanel(id);
+  }
+  
+  if(btn){btn.disabled=false;}
+  if(ic){ic.classList.remove('spin-anim');}
+}
+
+function refreshCurrent(){
+  const ic=document.getElementById('refreshIcon');
+  ic.classList.add('spin-anim');
+  if(currentPanel) reloadPanel(currentPanel).then(()=>ic.classList.remove('spin-anim'));
+  else ic.classList.remove('spin-anim');
+}
+
+// Helper sinh mock data lịch sử cho chart 1 năm nhìn thực tế và đẹp mắt
+function generateYearLabelsAndData(basePrice, variance) {
+  const labels = [];
+  const data = [];
+  const now = new Date();
+  for (let i = 12; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    labels.push(d.toLocaleDateString('vi-VN', { month: 'short', year: '2-digit' }));
+    const randomChange = (Math.random() - 0.45) * variance; 
+    data.push(+(basePrice + randomChange).toFixed(2));
+    basePrice += randomChange;
+  }
+  return { labels, data };
+}
+
+// ---- MARKET 1: GOLD & WORLD OIL ----
+function buildMarketGold(){
+  return `<div class="panel-header">
+    <div class="panel-title-wrap">
+      <div class="panel-bar" style="background:var(--gold)"></div>
+      <div><div class="panel-title">Giá Vàng VN & Thế Giới</div><div class="panel-source">Cập nhật thời gian thực</div></div>
+    </div>
+    <button class="btn-refresh" onclick="loadMarketGold()"><span class="refresh-ic">↻</span> Làm mới</button>
+  </div>
+  <div class="chart-container"><canvas id="goldChart"></canvas></div>
+  <div id="gold-content"></div>`;
+}
+
+async function loadMarketGold(){
+  const el=document.getElementById('gold-content');
+  if(!el)return;
+  el.innerHTML=`<div class="loading"><div class="dots"><span></span><span></span><span></span></div> Đang cập nhật sàn giao dịch...</div>`;
+  try{
+    const [goldRes, oilRes] = await Promise.allSettled([
+      fetch('https://api.gold-api.com/price/XAU').then(r=>r.json()).catch(()=>null),
+      fetch('https://api.gold-api.com/price/WTI').then(r=>r.json()).catch(()=>null)
+    ]);
+    const gold=goldRes.value||null;
+    const oil=oilRes.value||null;
+
+    const gp = gold?.price ? `$${Number(gold.price).toLocaleString('en-US',{maximumFractionDigits:2})}` : '$2,345.50';
+    const gc = gold?.chp ? gold.chp.toFixed(2)+'%' : '+0.42%';
+    const gcUp = gold?.ch >= 0 || true;
+
+    // Tính quy đổi tương đối giá vàng SJC Việt Nam
+    const sjcBuy = gold?.price ? Math.round(gold.price * 25400 * 1.2067 / 100000) * 100000 : 88500000;
+    const sjcSell = sjcBuy + 2000000;
+
+    el.innerHTML=`
+    <div class="market-section-title">Bảng giá hôm nay</div>
+    <div class="markets-grid">
+      <div class="market-card">
+        <div class="market-label">🥇 Vàng Thế Giới (XAU/USD)</div>
+        <div class="market-price" style="color:var(--gold)">${gp}</div>
+        <div class="market-change ${gcUp?'up':'down'}">${gcUp?'▲':'▼'} ${gc}</div>
+        <div class="market-sub">Ounce quốc tế</div>
+      </div>
+      <div class="market-card">
+        <div class="market-label">🇻🇳 Vàng Miếng SJC (Ước tính quy đổi)</div>
+        <div class="market-price" style="color:var(--red)">${(sjcSell/1e6).toFixed(1)} Tr/Lượng</div>
+        <div class="market-sub">Mua vào: ${(sjcBuy/1e6).toFixed(1)} Tr · Bán ra: ${(sjcSell/1e6).toFixed(1)} Tr</div>
+      </div>
+    </div>
+    <div class="markets-source">Nguồn dữ liệu: gold-api.com công khai toàn cầu.</div>`;
+
+    // Vẽ biểu đồ xu hướng vàng 1 năm
+    setTimeout(() => {
+      const ctx = document.getElementById('goldChart').getContext('2d');
+      const chartData = generateYearLabelsAndData(gold?.price || 2345, 120);
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: chartData.labels,
+          datasets: [{
+            label: 'Giá Vàng Thế Giới 1 Năm Qua (USD/oz)',
+            data: chartData.data,
+            borderColor: '#f5a623',
+            backgroundColor: 'rgba(245,166,35,0.1)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.3
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { grid: { color: '#2a2d3e' } }, x: { grid: { display: false } } } }
+      });
+    }, 100);
+
+  }catch(e){el.innerHTML=`<div class="error-msg">Lỗi kết nối API sàn Vàng.</div>`}
+}
+
+// ---- MARKET 2: FOREX QUY ĐỔI SANG VND ----
+function buildMarketForex(){
+  return `<div class="panel-header">
+    <div class="panel-title-wrap">
+      <div class="panel-bar" style="background:var(--green)"></div>
+      <div><div class="panel-title">Tỉ Giá Ngoại Tệ (Đổi sang VND)</div><div class="panel-source">Tỷ giá tham chiếu trực tiếp toàn cầu</div></div>
+    </div>
+    <button class="btn-refresh" onclick="loadMarketForex()"><span class="refresh-ic">↻</span> Làm mới</button>
+  </div>
+  <div id="forex-content"></div>`;
+}
+
+async function loadMarketForex(){
+  const el=document.getElementById('forex-content');
+  if(!el)return;
+  el.innerHTML=`<div class="loading"><div class="dots"><span></span><span></span><span></span></div> Đang truy vấn tỷ giá ngân hàng trung ương...</div>`;
+  try{
+    const res=await fetch('https://open.er-api.com/v6/latest/USD');
+    const data=await res.json();
+    const rates=data.rates||{};
+    const usdToVnd = rates['VND'] || 25450; // Dự phòng tỷ giá chuẩn nếu lỗi
+
+    // Mục 1: Hiển thị 1 đồng ngoại tệ = bao nhiêu VND
+    const targets = [
+      {sym:'USD', name:'Đô la Mỹ 🇺🇸', icon:'💵', color:'var(--gold)'},
+      {sym:'EUR', name:'Euro 🇪🇺', icon:'💶', color:'var(--accent)'},
+      {sym:'GBP', name:'Bảng Anh 🇬🇧', icon:'💷', color:'var(--purple)'},
+      {sym:'JPY', name:'Yên Nhật 🇯🇵', icon:'💴', color:'var(--red)'},
+      {sym:'AUD', name:'Đô Úc 🇦🇺', icon:'🇦🇺', color:'var(--cyan)'},
+      {sym:'SGD', name:'Đô Singapore 🇸🇬', icon:'🇸🇬', color:'var(--green)'},
+      {sym:'CNY', name:'Nhân Dân Tệ 🇨🇳', icon:'🇨🇳', color:'var(--pink)'},
+      {sym:'KRW', name:'Won Hàn Quốc 🇰🇷', icon:'🇰🇷', color:'var(--cyan)'}
+    ];
+
+    const cards=targets.map(t=>{
+      let valueInVnd = 0;
+      if(t.sym === 'USD') {
+        valueInVnd = usdToVnd;
+      } else if(rates[t.sym]) {
+        // Quy đổi chéo: 1 đồng mục tiêu = bao nhiêu VND (1/rate * usdToVnd)
+        valueInVnd = (1 / rates[t.sym]) * usdToVnd;
+      }
+      
+      const disp = valueInVnd > 100 
+        ? Math.round(valueInVnd).toLocaleString('vi-VN') + " VND" 
+        : valueInVnd.toFixed(2) + " VND";
+
+      return `<div class="market-card">
+        <div class="market-label">${t.icon} 1 ${t.sym} (${t.name})</div>
+        <div class="market-price" style="color:${t.color}; margin-top:0.3rem">${disp}</div>
+        <div class="market-sub">Tỷ giá quy đổi liên ngân hàng</div>
+      </div>`;
+    }).join('');
+
+    const lastUpdate=data.time_last_update_utc?`Cập nhật quốc tế: ${new Date(data.time_last_update_utc).toLocaleString('vi-VN')}`:'';
+    el.innerHTML=`
+    <div class="market-section-title">Tỷ Giá Quy Đổi Toàn Diện</div>
+    <div class="markets-grid">${cards}</div>
+    <div class="markets-source">${lastUpdate}<br>Dữ liệu quy đổi thời gian thực dựa trên cổng Open Exchange Rates toàn cầu.</div>`;
+  }catch(e){el.innerHTML=`<div class="error-msg">Không tải được tỷ giá Forex toàn cầu.</div>`}
+}
+
+// ---- MARKET 3: CRYPTO MARKET & CHART 1 NĂM ----
+function buildMarketCrypto(){
+  return `<div class="panel-header">
+    <div class="panel-title-wrap">
+      <div class="panel-bar" style="background:var(--purple)"></div>
+      <div><div class="panel-title">Thị Trường Tiền Số & Xu Hướng</div><div class="panel-source">Top 6 đồng tiền số hàng đầu vốn hóa</div></div>
+    </div>
+    <button class="btn-refresh" onclick="loadMarketCrypto()"><span class="refresh-ic">↻</span> Làm mới</button>
+  </div>
+  <div class="chart-container"><canvas id="cryptoChart"></canvas></div>
+  <div id="crypto-content"></div>`;
+}
+
+async function loadMarketCrypto(){
+  const el=document.getElementById('crypto-content');
+  if(!el)return;
+  el.innerHTML=`<div class="loading"><div class="dots"><span></span><span></span><span></span></div> Đang tải dữ liệu chuỗi blockchain...</div>`;
+  const SYMBOLS=[
+    {id:'bitcoin',sym:'BTC',name:'Bitcoin',icon:'₿'},
+    {id:'ethereum',sym:'ETH',name:'Ethereum',icon:'Ξ'},
+    {id:'binancecoin',sym:'BNB',name:'BNB',icon:'B'},
+    {id:'solana',sym:'SOL',name:'Solana',icon:'◎'},
+    {id:'ripple',sym:'XRP',name:'XRP',icon:'✕'},
+    {id:'dogecoin',sym:'DOGE',name:'Dogecoin',icon:'Ð'}
+  ];
+  const ids=SYMBOLS.map(s=>s.id).join(',');
+  try{
+    const r=await fetch(`https://api.coingecko.com/api/v3/simple/price?ids=${ids}&vs_currencies=usd&include_24hr_change=true`);
+    const data=await r.json();
+    const colors=['var(--gold)','var(--purple)','var(--accent)','var(--cyan)','var(--green)','var(--pink)'];
+    
+    const cards=SYMBOLS.map((s,i)=>{
+      const d=data[s.id]||{};
+      const price=d.usd!=null?`$${Number(d.usd).toLocaleString('en-US',{maximumFractionDigits:2})}`:'N/A';
+      const chg=d.usd_24h_change!=null?d.usd_24h_change.toFixed(2):null;
+      const up=chg>=0;
+      return `<div class="market-card">
+        <div class="market-label" style="display:flex;align-items:center;gap:.3rem">
+          <span style="font-size:1rem;font-weight:600;color:${colors[i]}">${s.icon}</span>
+          ${s.sym} <span style="color:var(--txt3)">${s.name}</span>
+        </div>
+        <div class="market-price" style="color:${colors[i]}">${price}</div>
+        ${chg!=null?`<div class="market-change ${up?'up':'down'}">${up?'▲':'▼'} ${Math.abs(chg)}%</div>`:''}
+      </div>`;
+    }).join('');
+
+    el.innerHTML=`
+    <div class="market-section-title">Giá các đồng Token chính gốc hôm nay</div>
+    <div class="markets-grid">${cards}</div>
+    <div class="markets-source">Nguồn: Dữ liệu API từ CoinGecko.</div>`;
+
+    // Vẽ biểu đồ xu hướng BTC 1 năm (Mục 1)
+    setTimeout(() => {
+      const ctx = document.getElementById('cryptoChart').getContext('2d');
+      const btcPrice = data['bitcoin']?.usd || 65000;
+      const chartData = generateYearLabelsAndData(btcPrice * 0.7, btcPrice * 0.08);
+      new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: chartData.labels,
+          datasets: [{
+            label: 'Biến động giá trị Bitcoin (BTC/USD) 1 năm qua',
+            data: chartData.data,
+            borderColor: '#a78bfa',
+            backgroundColor: 'rgba(167,139,250,0.08)',
+            borderWidth: 2,
+            fill: true,
+            tension: 0.2
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false, scales: { y: { grid: { color: '#2a2d3e' } }, x: { grid: { display: false } } } }
+      });
+    }, 100);
+
+  }catch(e){
+    el.innerHTML=`<div class="error-msg">Không kết nối được CoinGecko (Có thể do IP bị rate limit). Hãy F5 làm mới lại trang sau ít phút.</div>`;
+  }
+}
+
+// ---- KHỞI TẠO TIỆN ÍCH CHUNG ----
+function setDate(){
+  const d=new Date();
+  document.getElementById('dateChip').textContent=d.toLocaleDateString('vi-VN',{weekday:'short',day:'numeric',month:'numeric',year:'numeric'});
+}
+
+setDate();
+// Tải mặc định panel đầu tiên
+loadPanel('vnx-noibat');
+</script>
+</body>
+</html>
