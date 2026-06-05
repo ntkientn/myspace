@@ -620,267 +620,140 @@
         }
 
         // =====================================================================
-        // GAME 5: CYBER MATRIX 2048 (BẢN UPDATE: HIỆU ỨNG TRƯỢT KHỐI DI ĐỘNG)
+        // GAME 3: MA TRẬN SỐ 2048
         // =====================================================================
-        let board2048 = [];
-        let isAnimating2048 = false; // Khóa bo mạch khi đang trượt khối
+        let grid2048, score2048;
         const size2048 = 4;
-        const gridW = 280, gridH = 280; // Kích thước khung ma trận lớn
-        const cellGap = 8;
-        const cellSize = (gridW - (cellGap * (size2048 + 1))) / size2048; // ~60px mỗi ô
-        const startX2048 = (canvas.width - gridW) / 2;
-        const startY2048 = 100;
 
-        function startGame2048() {
+        function start2048Game() {
             document.getElementById('game-overlay').classList.add('hidden');
             if (gameLoopId) cancelAnimationFrame(gameLoopId);
-            isGameRunning = true; score = 0; particles = []; isAnimating2048 = false;
-            updateScore(score);
+            isGameRunning = true; particles = []; canvas.onmousedown = null; canvas.ontouchstart = null;
+            score2048 = 0;
+            init2048Grid();
+            draw2048();
+        }
 
-            // Khởi tạo ma trận rỗng kèm theo hệ tọa độ động lực học
-            board2048 = [];
-            for (let r = 0; r < size2048; r++) {
-                board2048[r] = [];
-                for (let c = 0; c < size2048; c++) {
-                    board2048[r][c] = { 
-                        value: 0, 
-                        x: c, y: r,        // Tọa độ lưới logic hiện tại
-                        animX: c, animY: r,// Tọa độ ảo phục vụ hiệu ứng trượt
-                        isMerged: false 
-                    };
-                }
+        function init2048Grid() {
+            grid2048 = Array(size2048).fill(null).map(() => Array(size2048).fill(0));
+            add2048Tile(); add2048Tile();
+        }
+
+        function add2048Tile() {
+            let emptyCells = [];
+            for(let r=0; r<size2048; r++) {
+                for(let c=0; c<size2048; c++) { if (grid2048[r][c] === 0) emptyCells.push({r, c}); }
             }
-            // Sinh 2 ô số đầu tiên
-            spawnNumber2048(); spawnNumber2048();
+            if (emptyCells.length > 0) {
+                let cell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                grid2048[cell.r][cell.c] = Math.random() < 0.9 ? 2 : 4;
+            }
+        }
 
-            // Đăng ký sự kiện vuốt màn hình (Swipe) trên Mobile & PC
-            let touchStartX = 0, touchStartY = 0;
-            canvas.onmousedown = (e) => { touchStartX = e.clientX; touchStartY = e.clientY; };
-            canvas.onmouseup = (e) => { handleSwipe2048(e.clientX - touchStartX, e.clientY - touchStartY); };
-            canvas.ontouchstart = (e) => { touchStartX = e.touches[0].clientX; touchStartY = e.touches[0].clientY; };
-            canvas.ontouchend = (e) => { 
-                let dx = e.changedTouches[0].clientX - touchStartX;
-                let dy = e.changedTouches[0].clientY - touchStartY;
-                handleSwipe2048(dx, dy);
+        function draw2048() {
+            if (currentActiveGame !== 'game2048') return;
+            ctx.fillStyle = '#05060f'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            const boardW = 340, pad = 12;
+            const tileW = (boardW - (size2048 + 1) * pad) / size2048;
+            const startX = (canvas.width - boardW) / 2;
+            const startY = (canvas.height - boardW) / 2;
+
+            ctx.fillStyle = '#0d1224'; ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 2;
+            ctx.beginPath(); ctx.roundRect(startX, startY, boardW, boardW, 14); ctx.fill(); ctx.stroke();
+
+            const colors = {
+                2: {bg: '#1e293b', txt: '#f8fafc', glow: 0}, 4: {bg: '#334155', txt: '#f8fafc', glow: 0},
+                8: {bg: '#1e3a8a', txt: '#93c5fd', glow: 5}, 16: {bg: '#2563eb', txt: '#ffffff', glow: 8},
+                32: {bg: '#065f46', txt: '#a7f3d0', glow: 6}, 64: {bg: '#059669', txt: '#ffffff', glow: 10},
+                128: {bg: '#78350f', txt: '#fde68a', glow: 8}, 256: {bg: '#d97706', txt: '#ffffff', glow: 14},
+                512: {bg: '#701a75', txt: '#fbcfe8', glow: 12}, 1024: {bg: '#2e1065', txt: '#e9d5ff', glow: 16},
+                2048: {bg: '#be123c', txt: '#ffffff', glow: 22}
             };
 
-            // Hàm xử lý hướng vuốt
-            function handleSwipe2048(delX, delY) {
-                if (!isGameRunning || isAnimating2048) return;
-                const minSwipe = 30; // Khoảng cách tối thiểu để nhận diện vuốt
-                if (Math.abs(delX) < minSwipe && Math.abs(delY) < minSwipe) return;
+            for(let r=0; r<size2048; r++) {
+                for(let c=0; c<size2048; c++) {
+                    let val = grid2048[r][c];
+                    let tX = startX + pad + c * (tileW + pad);
+                    let tY = startY + pad + r * (tileW + pad);
 
-                let moved = false;
-                if (Math.abs(delX) > Math.abs(delY)) {
-                    if (delX > 0) moved = move2048('RIGHT'); else moved = move2048('LEFT');
-                } else {
-                    if (delY > 0) moved = move2048('DOWN'); else moved = move2048('UP');
-                }
-
-                if (moved) {
-                    isAnimating2048 = true; // Kích hoạt trạng thái chạy hiệu ứng trượt
+                    ctx.save();
+                    if (val > 0) {
+                        let conf = colors[val] || {bg: '#4c1d95', txt: '#ffffff', glow: 25};
+                        ctx.fillStyle = conf.bg;
+                        if(conf.glow > 0) { ctx.shadowBlur = conf.glow; ctx.shadowColor = conf.bg; }
+                        ctx.beginPath(); ctx.roundRect(tX, tY, tileW, tileW, 8); ctx.fill();
+                        
+                        ctx.shadowBlur = 0; ctx.fillStyle = conf.txt;
+                        ctx.font = `bold ${tileW * (val > 100 ? 0.35 : 0.45)}px sans-serif`;
+                        ctx.textAlign = "center"; ctx.textBaseline = "middle";
+                        ctx.fillText(val, tX + tileW/2, tY + tileW/2);
+                    } else {
+                        ctx.fillStyle = '#080b14'; ctx.beginPath(); ctx.roundRect(tX, tY, tileW, tileW, 8); ctx.fill();
+                    }
+                    ctx.restore();
                 }
             }
+            updateAndRenderParticles();
+            if(isGameRunning) gameLoopId = requestAnimationFrame(draw2048);
+        }
 
-            // Thuật toán dồn mảng và thiết lập tọa độ ảo để trượt
-            function move2048(dir) {
-                let moved = false;
-                // Reset trạng thái hòa trộn của các ô số
-                for (let r = 0; r < size2048; r++) {
-                    for (let c = 0; c < size2048; c++) {
-                        board2048[r][c].isMerged = false;
-                        board2048[r][c].animX = c;
-                        board2048[r][c].animY = r;
-                    }
-                }
+        function handle2048Move(dir) {
+            if (!isGameRunning) return;
+            let moved = false;
+            let rotatedGrid = grid2048;
 
-                const dRow = dir === 'UP' ? -1 : dir === 'DOWN' ? 1 : 0;
-                const dCol = dir === 'LEFT' ? -1 : dir === 'RIGHT' ? 1 : 0;
+            if (dir === 'up') rotatedGrid = rotateMatrixCounterClockwise(grid2048);
+            if (dir === 'right') rotatedGrid = rotateMatrixClockwise(rotateMatrixClockwise(grid2048));
+            if (dir === 'down') rotatedGrid = rotateMatrixClockwise(grid2048);
 
-                // Xác định thứ tự duyệt mảng để không bị đè dữ liệu
-                const startIdx = (dir === 'DOWN' || dir === 'RIGHT') ? size2048 - 1 : 0;
-                const endIdx = (dir === 'DOWN' || dir === 'RIGHT') ? -1 : size2048;
-                const step = (dir === 'DOWN' || dir === 'RIGHT') ? -1 : 1;
-
-                for (let r = step === 1 ? 0 : size2048 - 1; r >= 0 && r < size2048; r -= step) {
-                    for (let c = step === 1 ? 0 : size2048 - 1; c >= 0 && c < size2048; c -= step) {
-                        if (board2048[r][c].value === 0) continue;
-
-                        let currR = r;
-                        let currC = c;
-
-                        // Dồn ô số về hướng vuốt cho đến khi chạm biên hoặc chạm ô khác
-                        while (true) {
-                            let nextR = currR + dRow;
-                            let nextC = currC + dCol;
-
-                            if (nextR < 0 || nextR >= size2048 || nextC < 0 || nextC >= size2048) break;
-
-                            let nextCell = board2048[nextR][nextC];
-                            if (nextCell.value === 0) {
-                                // Di chuyển ô sang vị trí trống
-                                board2048[nextR][nextC].value = board2048[currR][currC].value;
-                                board2048[nextR][nextC].animX = board2048[currR][currC].animX; // Giữ lại gốc tọa độ cũ để vẽ chuyển động trượt
-                                board2048[nextR][nextC].animY = board2048[currR][currC].animY;
-                                board2048[currR][currC].value = 0;
-                                currR = nextR;
-                                currC = nextC;
-                                moved = true;
-                            } else if (nextCell.value === board2048[currR][currC].value && !nextCell.isMerged) {
-                                // Hai ô cùng số va chạm -> Hòa trộn nâng cấp nhân đôi!
-                                board2048[nextR][nextC].value *= 2;
-                                board2048[nextR][nextC].animX = board2048[currR][currC].animX;
-                                board2048[nextR][nextC].animY = board2048[currR][currC].animY;
-                                board2048[nextR][nextC].isMerged = true;
-                                board2048[currR][currC].value = 0;
-                                score += board2048[nextR][nextC].value;
-                                updateScore(score);
-                                moved = true;
-                                break;
-                            } else {
-                                break;
-                            }
+            for (let r = 0; r < size2048; r++) {
+                let row = rotatedGrid[r].filter(v => v !== 0);
+                let newRow = [];
+                for (let i = 0; i < row.length; i++) {
+                    if (row[i] === row[i + 1]) {
+                        let mergedVal = row[i] * 2;
+                        newRow.push(mergedVal); score2048 += mergedVal; i++; moved = true;
+                        createExplosion(canvas.width/2, canvas.height/2, '#f59e0b', 5);
+                        if(mergedVal === 2048) {
+                            isGameRunning = false;
+                            setTimeout(() => {
+                                document.getElementById('overlay-title').innerText = "VI THÀNH TỰU!";
+                                document.getElementById('overlay-title').className = "text-2xl font-black text-amber-400";
+                                document.getElementById('overlay-desc').innerText = "Chúc mừng con trai! Con đã hợp thể thành công ô số huyền thoại 2048!";
+                                document.getElementById('game-overlay').classList.remove('hidden');
+                            }, 300);
                         }
-                    }
+                    } else { newRow.push(row[i]); }
                 }
-                return moved;
+                while (newRow.length < size2048) newRow.push(0);
+                if (JSON.stringify(rotatedGrid[r]) !== JSON.stringify(newRow)) moved = true;
+                rotatedGrid[r] = newRow;
             }
 
-            function spawnNumber2048() {
-                let emptyCells = [];
-                for (let r = 0; r < size2048; r++) {
-                    for (let c = 0; c < size2048; c++) {
-                        if (board2048[r][c].value === 0) emptyCells.push({r, c});
-                    }
-                }
-                if (emptyCells.length > 0) {
-                    let {r, c} = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-                    board2048[r][c].value = Math.random() < 0.9 ? 2 : 4;
-                    // Ô mới xuất hiện sẽ mọc lên tại chỗ mượt mà
-                    board2048[r][c].animX = c;
-                    board2048[r][c].animY = r;
+            if (dir === 'up') grid2048 = rotateMatrixClockwise(rotatedGrid);
+            else if (dir === 'right') grid2048 = rotateMatrixClockwise(rotateMatrixClockwise(rotatedGrid));
+            else if (dir === 'down') grid2048 = rotateMatrixCounterClockwise(rotatedGrid);
+            else grid2048 = rotatedGrid;
+
+            if (moved) {
+                add2048Tile(); updateScore(score2048);
+                if (check2048GameOver()) triggerGameOver();
+            }
+        }
+
+        function rotateMatrixClockwise(matrix) { return matrix[0].map((val, index) => matrix.map(row => row[index]).reverse()); }
+        function rotateMatrixCounterClockwise(matrix) { return matrix[0].map((val, index) => matrix.map(row => row[row.length - 1 - index])); }
+
+        function check2048GameOver() {
+            for (let r = 0; r < size2048; r++) {
+                for (let c = 0; c < size2048; c++) {
+                    if (grid2048[r][c] === 0) return false;
+                    if (c < size2048 - 1 && grid2048[r][c] === grid2048[r][c + 1]) return false;
+                    if (r < size2048 - 1 && grid2048[r][c] === grid2048[r + 1][c]) return false;
                 }
             }
-
-            function checkGameOver2048() {
-                for (let r = 0; r < size2048; r++) {
-                    for (let c = 0; c < size2048; c++) {
-                        if (board2048[r][c].value === 0) return false;
-                        if (r < size2048 - 1 && board2048[r][c].value === board2048[r+1][c].value) return false;
-                        if (c < size2048 - 1 && board2048[r][c].value === board2048[r][c+1].value) return false;
-                    }
-                }
-                return true;
-            }
-
-            // MÀU SẮC ĐẶC TRƯNG CYBER CHO TỪNG KHỐI SỐ CỦA BÉ KHANG
-            function getCellColor(val) {
-                const colors = {
-                    2:    { bg: '#1e293b', txt: '#f8fafc' },
-                    4:    { bg: '#334155', txt: '#f8fafc' },
-                    8:    { bg: '#f97316', txt: '#ffffff' }, // Màu cam rực rỡ
-                    16:   { bg: '#ea580c', txt: '#ffffff' },
-                    32:   { bg: '#ef4444', txt: '#ffffff' }, // Màu đỏ anh đào
-                    64:   { bg: '#dc2626', txt: '#ffffff' },
-                    128:  { bg: '#eab308', txt: '#0f172a' }, // Màu vàng hoàng gia
-                    256:  { bg: '#facc15', txt: '#0f172a' },
-                    512:  { bg: '#10b981', txt: '#ffffff' }, // Màu xanh ngọc lục bảo
-                    1024: { bg: '#06b6d4', txt: '#ffffff' },
-                    2048: { bg: '#a855f7', txt: '#ffffff' }  // Đỉnh cao màu tím Nebula cực ngầu!
-                };
-                return colors[val] || { bg: '#4c1d95', txt: '#ffffff' };
-            }
-
-            function loop() {
-                if (!isGameRunning) return;
-                ctx.fillStyle = '#060813'; ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-                // 1. Vẽ Khung Background Lưới Ma Trận 4x4
-                ctx.save();
-                ctx.fillStyle = '#0f172a';
-                ctx.strokeStyle = '#1e293b';
-                ctx.lineWidth = 2;
-                ctx.beginPath(); ctx.roundRect(startX2048, startY2048, gridW, gridH, 10); ctx.fill(); ctx.stroke();
-
-                // Vẽ các ô trống lót nền phía sau
-                for (let r = 0; r < size2048; r++) {
-                    for (let c = 0; c < size2048; c++) {
-                        let cX = startX2048 + cellGap + c * (cellSize + cellGap);
-                        let cY = startY2048 + cellGap + r * (cellSize + cellGap);
-                        ctx.fillStyle = '#1e293b/40';
-                        ctx.fillStyle = 'rgba(30, 41, 59, 0.5)';
-                        ctx.beginPath(); ctx.roundRect(cX, cY, cellSize, cellSize, 6); ctx.fill();
-                    }
-                }
-                ctx.restore();
-
-                // 2. CẬP NHẬT TỌA ĐỘ ẢO ĐỂ TẠO HIỆU ỨNG TRƯỢT MƯỢT MÀ (Interpolation Animation)
-                let animationCompleted = true;
-                const animSpeed = 0.25; // Tốc độ trượt khối (Càng lớn trượt càng nhanh)
-
-                for (let r = 0; r < size2048; r++) {
-                    for (let c = 0; c < size2048; c++) {
-                        let cell = board2048[r][c];
-                        if (cell.value !== 0) {
-                            // Nội suy tuyến tính đưa tọa độ ảo tiến sát tọa độ thật của ô lưới
-                            if (Math.abs(cell.animX - c) > 0.01) {
-                                cell.animX += (c - cell.animX) * animSpeed;
-                                animationCompleted = false;
-                            } else { cell.animX = c; }
-
-                            if (Math.abs(cell.animY - r) > 0.01) {
-                                cell.animY += (r - cell.animY) * animSpeed;
-                                animationCompleted = false;
-                            } else { cell.animY = r; }
-                        }
-                    }
-                }
-
-                // Khi tất cả gạch đã trượt về đích hoàn chỉnh, sinh ra ô mới và mở khóa bo mạch
-                if (isAnimating2048 && animationCompleted) {
-                    isAnimating2048 = false;
-                    spawnNumber2048();
-                    if (checkGameOver2048()) {
-                        isGameRunning = false;
-                        setTimeout(() => {
-                            document.getElementById('overlay-title').innerText = "HẾT NƯỚC ĐI!";
-                            document.getElementById('overlay-desc').innerText = `Bé chơi rất khéo! Ma trận đã lấp đầy với tổng số điểm: ${score}!`;
-                            document.getElementById('game-overlay').classList.remove('hidden');
-                        }, 400);
-                        return;
-                    }
-                }
-
-                // 3. RENDER CÁC KHỐI SỐ ĐANG DI CHUYỂN
-                for (let r = 0; r < size2048; r++) {
-                    for (let c = 0; c < size2048; c++) {
-                        let cell = board2048[r][c];
-                        if (cell.value === 0) continue;
-
-                        // Tính toán vị trí render pixel dựa hoàn toàn trên tọa độ ảo animX, animY
-                        let renderX = startX2048 + cellGap + cell.animX * (cellSize + cellGap);
-                        let renderY = startY2048 + cellGap + cell.animY * (cellSize + cellGap);
-
-                        let theme = getCellColor(cell.value);
-
-                        ctx.save();
-                        // Vẽ khối số bo tròn bóng bẩy
-                        ctx.fillStyle = theme.bg;
-                        ctx.beginPath(); ctx.roundRect(renderX, renderY, cellSize, cellSize, 6); ctx.fill();
-
-                        // Đổ số ở chính giữa tâm khối vuông
-                        ctx.fillStyle = theme.txt;
-                        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-                        ctx.font = `bold ${cell.value >= 1024 ? '15px' : cell.value >= 100 ? '18px' : '22px'} "Share Tech Mono"`;
-                        ctx.fillText(cell.value, renderX + cellSize / 2, renderY + cellSize / 2);
-                        ctx.restore();
-                    }
-                }
-
-                updateAndRenderParticles();
-                gameLoopId = requestAnimationFrame(loop);
-            }
-            loop();
+            return true;
         }
 
         // =====================================================================
