@@ -112,15 +112,44 @@ body{font-family:"DM Sans",sans-serif;color:var(--tx);background:var(--bg);min-h
 .ph{padding:1.5rem 1rem;font-size:13.5px;color:var(--tx2);line-height:1.65}
 .footer{margin-top:3rem;text-align:center;font-size:12px;color:var(--tx3);padding-top:1rem;border-top:1px solid var(--bd)}
 
-/* App button */
-.app-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--gn-bd);background:var(--gn-bg);color:var(--gn-dk);cursor:pointer;transition:all .15s;white-space:nowrap;text-decoration:none}
-.app-btn:hover{background:var(--gn);color:#fff;border-color:var(--gn)}
-.app-btn.planned{border-color:var(--or-bd);background:var(--or-bg);color:var(--or-tx)}
-.app-btn.planned:hover{background:var(--or-bd);color:#fff;border-color:var(--or-bd)}
-.app-btn-lg{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:var(--r-sm);font-size:13px;font-weight:500;border:1px solid var(--gn-bd);background:var(--gn-bg);color:var(--gn-dk);cursor:pointer;transition:all .15s;text-decoration:none;width:100%;justify-content:center;margin-bottom:8px}
-.app-btn-lg:hover{background:var(--gn);color:#fff}
-.app-btn-lg.planned{border-color:var(--or-bd);background:var(--or-bg);color:var(--or-tx)}
-.app-btn-lg.planned:hover{background:var(--or-bd);color:#fff}
+/* App button — card */
+.app-btn{
+  display:inline-flex;align-items:center;gap:5px;
+  padding:5px 12px;border-radius:var(--r-sm);
+  font-size:12px;font-weight:600;
+  border:none;
+  background:var(--gn);color:#fff;
+  cursor:pointer;transition:all .18s;white-space:nowrap;
+  box-shadow:0 1px 4px rgba(29,158,117,.35);
+  text-decoration:none;letter-spacing:.01em;
+}
+.app-btn:hover{background:#168a62;box-shadow:0 2px 8px rgba(29,158,117,.45);transform:translateY(-1px)}
+.app-btn:active{transform:translateY(0);box-shadow:none}
+.app-btn.planned{
+  background:var(--sf2);color:var(--tx2);
+  border:1px dashed var(--bd2);box-shadow:none;
+}
+.app-btn.planned:hover{background:var(--sf3);color:var(--tx);transform:none;box-shadow:none}
+/* App button — drawer */
+.app-btn-lg{
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:11px 20px;border-radius:var(--r-sm);
+  font-size:13.5px;font-weight:600;
+  border:none;
+  background:var(--gn);color:#fff;
+  cursor:pointer;transition:all .18s;width:100%;
+  box-shadow:0 2px 8px rgba(29,158,117,.3);
+  text-decoration:none;letter-spacing:.01em;
+  margin-bottom:8px;
+}
+.app-btn-lg:hover{background:#168a62;box-shadow:0 4px 14px rgba(29,158,117,.4);transform:translateY(-1px)}
+.app-btn-lg:active{transform:translateY(0)}
+.app-btn-lg.planned{
+  background:var(--sf2);color:var(--tx2);
+  border:1px dashed var(--bd2);box-shadow:none;
+  font-weight:500;
+}
+.app-btn-lg.planned:hover{background:var(--sf3);color:var(--tx);transform:none;box-shadow:none}
 /* Toast popup */
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a1a2e;color:#fff;padding:10px 18px;border-radius:var(--r-sm);font-size:13px;font-weight:500;z-index:999;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.25)}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
@@ -189,12 +218,12 @@ const CATS = [
 /* ==========================================================
    TOOLS DATA
    Mỗi tool = 1 object. Để thêm/xoá/sửa chỉ cần edit object này.
-   Fields: id*, name*, type*, cats*, icon*, what*, when, avoid, steps, combine, example, pmpNote, appUrl
+   Fields: id*, name*, type*, cats*, icon*, what*, when, avoid, steps, combine, example, pmpNote
    (*) = required
    ========================================================== */
 const TD = [
   // ── INTEGRATION ──
-  {id:"expert-judgment",appUrl:"pm-tools-advisor.html",name:"Expert Judgment",type:"Technique",cats:["integration","scope","schedule","cost","risk","facilitation"],icon:"ti-user-check",
+  {id:"expert-judgment",name:"Expert Judgment",type:"Technique",cats:["integration","scope","schedule","cost","risk","facilitation"],icon:"ti-user-check",
    what:"Tham vấn ý kiến từ người có chuyên môn — internal SME, external consultant, hoặc chính PM dựa trên kinh nghiệm.",
    when:["Cần quyết định nhanh mà không đủ data","Estimate cost/schedule khi chưa có precedent","Evaluate technical options ngoài tầm PM"],
    avoid:["Thay thế hoàn toàn data-driven analysis khi data có sẵn","Chỉ hỏi 1 expert cho quyết định high-stakes"],
@@ -203,7 +232,7 @@ const TD = [
    example:"PM estimate module AI mới → mời Tech Lead + external consultant → record estimate range + assumptions → dùng PERT để ra con số chính thức.",
    pmpNote:"Expert Judgment xuất hiện trong hầu hết processes. PMP hay hỏi 'PM nên làm gì đầu tiên?' — Expert Judgment thường là bước đầu khi chưa có thông tin."},
 
-  {id:"meetings",appUrl:"pm-tools-advisor.html",name:"Meetings & Facilitation",type:"Technique",cats:["integration","communication","facilitation"],icon:"ti-users",
+  {id:"meetings",name:"Meetings & Facilitation",type:"Technique",cats:["integration","communication","facilitation"],icon:"ti-users",
    what:"Structured meeting với agenda rõ ràng, facilitator điều phối, output cụ thể. Kỹ thuật có chủ đích, không phải mọi cuộc họp.",
    when:["Cần align nhiều stakeholder cùng lúc","Giải quyết conflict hoặc ambiguity","Kick-off, retrospective, decision-making sessions"],
    avoid:["Meeting không có agenda","Meeting không có action items và owner","Meeting thay thế async update khi không cần real-time"],
@@ -212,7 +241,7 @@ const TD = [
    example:"Sprint Planning: PM gửi agenda trước, timebox 2h cho 2-week sprint, team vote story points, close với sprint goal + commitment.",
    pmpNote:"No agenda = no meeting. Mọi meeting cần Purpose + Agenda + Owner + Timebox."},
 
-  {id:"mcda",name:"MCDA",type:"Tool",cats:["integration","scope","procurement","stakeholder"],icon:"ti-table",
+  {id:"mcda",name:"MCDA - Multicriteria Decision Analysis",type:"Tool",cats:["integration","scope","procurement","stakeholder"],icon:"ti-table",
    what:"Multicriteria Decision Analysis — ra quyết định khi có nhiều lựa chọn và nhiều tiêu chí. Assign weight, score, tính weighted total.",
    when:["Vendor selection","Technology stack decision","Prioritize competing project options"],
    avoid:["Dùng cho quyết định đơn giản — overkill","Assign weight tuỳ tiện không có stakeholder agreement"],
@@ -221,7 +250,7 @@ const TD = [
    example:"Chọn cloud vendor: Criteria = Cost 30%, Security 25%, Support 20%, Scalability 25%. Score AWS vs Azure vs GCP → present kết quả với sponsor.",
    pmpNote:"MCDA đặc biệt hữu ích để tránh bias và có thể defend với sponsor bằng data."},
 
-  {id:"change-control",appUrl:"pm-tools-advisor.html",name:"Change Control Tools",type:"Tool",cats:["integration"],icon:"ti-git-branch",
+  {id:"change-control",name:"Change Control Tools",type:"Tool",cats:["integration"],icon:"ti-git-branch",
    what:"Hệ thống quy trình submit, evaluate, approve/reject thay đổi về scope/schedule/cost. Gồm CR form, CCB, change log.",
    when:["Bất kỳ thay đổi nào so với approved baseline","Stakeholder yêu cầu thêm feature","Phát hiện deviation trong execution"],
    avoid:["Approve change verbally không có documentation","Bypass CCB vì urgent","Implement trước khi có formal approval"],
@@ -230,7 +259,7 @@ const TD = [
    example:"Client yêu cầu thêm dashboard giữa sprint → CR → estimate 5 man-days → impact: push go-live 1 tuần → CCB approve → update baseline.",
    pmpNote:"Mọi thay đổi đều qua Integrated Change Control — kể cả từ Sponsor."},
 
-  {id:"impact-analysis",name:"Impact Analysis",type:"Technique",cats:["integration"],icon:"ti-arrows-split",
+  {id:"impact-analysis",appUrl:"#",name:"Impact Analysis",type:"Technique",cats:["integration"],icon:"ti-arrows-split",
    what:"Phân tích có hệ thống tác động của thay đổi hoặc sự kiện lên scope, cost, schedule, quality, risk, resources.",
    when:["Trước khi approve bất kỳ change request","Khi risk materializes","Evaluate competing priorities"],
    avoid:["Bỏ qua ripple effects","Estimate một mình — cần input từ tech lead và QA"],
@@ -290,7 +319,7 @@ const TD = [
    example:"Chọn tech stack, senior có tendency dominate → NGT → junior đề xuất solution được vote cao nhất → adopted.",
    pmpNote:"NGT hiệu quả trong môi trường có hierarchy — mọi người có tiếng nói bình đẳng."},
 
-  {id:"wbs",name:"WBS",type:"Tool",cats:["scope","schedule"],icon:"ti-sitemap",
+  {id:"wbs",appUrl:"",name:"WBS",type:"Tool",cats:["scope","schedule"],icon:"ti-sitemap",
    what:"Work Breakdown Structure — cấu trúc phân cấp tất cả deliverables thành Work Packages có thể estimate, assign và track.",
    when:["Planning phase — bắt buộc trong Waterfall","Cần bottom-up estimate","Cần clarity về scope với stakeholders"],
    avoid:["WBS dựa trên activities thay vì deliverables","Work Package quá lớn: trên 80h hoặc 2 tuần","Không được stakeholder review"],
@@ -308,7 +337,7 @@ const TD = [
    pmpNote:"Rolling wave = progressive elaboration trong practice. Phổ biến trong Hybrid và large Agile programs."},
 
   // ── SCHEDULE ──
-  {id:"pert",appUrl:"pm-tools-advisor.html",name:"Three-point Estimating (PERT)",type:"Tool",cats:["schedule","cost"],icon:"ti-math",
+  {id:"pert",appUrl:"#",name:"Three-point Estimating (PERT)",type:"Tool",cats:["schedule","cost"],icon:"ti-math",
    what:"Estimation dùng 3 điểm: Optimistic (O), Most Likely (M), Pessimistic (P). Formula: E = (O + 4M + P) / 6.",
    when:["Uncertainty cao, chưa có precedent","Cần communicate estimate range","Schedule/cost có risk cao"],
    avoid:["Dùng cho tasks đơn giản — overkill","Bỏ qua P (pessimistic)"],
@@ -317,7 +346,7 @@ const TD = [
    example:"Payment gateway: O=3d, M=5d, P=12d → E=5.8d, SD=1.5 → 95% range: 2.8–8.8d → PM schedule 7 days.",
    pmpNote:"Công thức PERT hay ra trong exam: E = (O + 4M + P) / 6. SD = (P - O) / 6. 1σ=68%, 2σ=95%, 3σ=99.7%."},
 
-  {id:"cpm",appUrl:"pm-tools-advisor.html",name:"Critical Path Method (CPM)",type:"Tool",cats:["schedule"],icon:"ti-route",
+  {id:"cpm",appUrl:"#",name:"Critical Path Method (CPM)",type:"Tool",cats:["schedule"],icon:"ti-route",
    what:"Xác định chuỗi task dài nhất trong network — Critical Path có zero float. Delay trên CP = project delay.",
    when:["Planning — bắt buộc trong Waterfall","Xác định tasks quan trọng nhất để monitor","Schedule compression"],
    avoid:["Ignore near-critical paths (float dưới 3 ngày)","Không update khi scope/resource thay đổi"],
@@ -344,7 +373,7 @@ const TD = [
    example:"QA 4 tuần trên CP, cần 2 tuần: thêm 2 QA ($4K) → rút 12 ngày → $333/day saved vs penalty $2K/day.",
    pmpNote:"Crash Point = điểm mà thêm resource không giảm thêm được thời gian."},
 
-  {id:"bottom-up",name:"Bottom-up Estimating",type:"Technique",cats:["schedule","cost"],icon:"ti-stack-3",
+  {id:"bottom-up",appUrl:"#",name:"Bottom-up Estimating",type:"Technique",cats:["schedule","cost"],icon:"ti-stack-3",
    what:"Estimate từ Work Packages (lowest level of WBS) rồi aggregate lên. Accurate nhất nhưng tốn thời gian nhất.",
    when:["Cần high accuracy","Project có WBS chi tiết","Fixed-price contract"],
    avoid:["Dùng khi project còn concept stage — chưa đủ detail","Skip expert input cho complex tasks"],
@@ -352,7 +381,7 @@ const TD = [
    combine:["wbs","pert","expert-judgment"],
    example:"47 WPs → aggregate = 2,340h / $186K. Contingency $28K. Total $214K."},
 
-  {id:"analogous",name:"Analogous Estimating",type:"Technique",cats:["schedule","cost"],icon:"ti-copy",
+  {id:"analogous",appUrl:"#",name:"Analogous Estimating",type:"Technique",cats:["schedule","cost"],icon:"ti-copy",
    what:"Top-down estimate dựa trên data từ similar past projects. Nhanh nhưng kém accurate hơn bottom-up.",
    when:["Early stage — chưa đủ detail","Quick estimate cần ngay","Project tương tự đã làm trước"],
    avoid:["Dùng khi project có significant differences so với precedent","Không document assumptions về similarities"],
@@ -360,7 +389,7 @@ const TD = [
    combine:["expert-judgment","parametric"],
    pmpNote:"Analogous = fastest, least accurate. Bottom-up = slowest, most accurate. Parametric ở giữa."},
 
-  {id:"parametric",name:"Parametric Estimating",type:"Technique",cats:["schedule","cost"],icon:"ti-calculator",
+  {id:"parametric",appUrl:"#",name:"Parametric Estimating",type:"Technique",cats:["schedule","cost"],icon:"ti-calculator",
    what:"Estimate dựa trên statistical relationship giữa historical data và project variables. Ví dụ: $X per function point.",
    when:["Có historical data với clear unit rate","Project có repetitive elements","Cần accurate hơn analogous nhưng nhanh hơn bottom-up"],
    avoid:["Dùng khi unit rate không stable","Apply parameters từ industry khác mà không adjust"],
@@ -369,7 +398,7 @@ const TD = [
    example:"Past: 3 days/screen. New app: 24 screens → 72 days. 3 complex screens x 1.5 → revised 78 days."},
 
   // ── COST ──
-  {id:"evm",appUrl:"pm-tools-advisor.html",name:"Earned Value Management",type:"Tool",cats:["cost","schedule"],icon:"ti-chart-bar",
+  {id:"evm",appUrl:"#",name:"Earned Value Management",type:"Tool",cats:["cost","schedule"],icon:"ti-chart-bar",
    what:"EVM — Framework đo lường performance tích hợp scope + schedule + cost. Dùng PV, EV, AC để tính metrics.",
    when:["Monitoring & Controlling — dùng liên tục","Report performance cho sponsor","Forecast completion cost và date"],
    avoid:["Báo cáo chỉ % complete mà không có EV","Confuse EV với AC: EV = value of work done, AC = actual cost"],
@@ -388,7 +417,7 @@ const TD = [
    pmpNote:"Contingency Reserve nằm TRONG cost baseline. Management Reserve nằm NGOÀI baseline nhưng trong project budget."},
 
   // ── QUALITY ──
-  {id:"fishbone",name:"Fishbone Diagram",type:"Tool",cats:["quality"],icon:"ti-git-fork",
+  {id:"fishbone",appUrl:"#",name:"Fishbone Diagram",type:"Tool",cats:["quality"],icon:"ti-git-fork",
    what:"Cause-and-Effect (Ishikawa) Diagram — hình xương cá để analyze tất cả possible causes theo 6M categories.",
    when:["Root cause analysis sau defect/issue","Process improvement workshop","Prevent future problems"],
    avoid:["Stop ở symptoms, không đào sâu root causes","Thiếu categories — miss potential causes"],
@@ -397,7 +426,7 @@ const TD = [
    example:"15% login failure: Method/Code/Infrastructure/Testing → Root cause: no load testing → add performance test gate.",
    pmpNote:"Còn gọi là Ishikawa hoặc Cause-and-Effect Diagram. 6M = cách nhớ nhanh nhất."},
 
-  {id:"pareto",name:"Pareto Chart (80/20)",type:"Tool",cats:["quality"],icon:"ti-chart-histogram",
+  {id:"pareto",appUrl:"#",name:"Pareto Chart (80/20)",type:"Tool",cats:["quality"],icon:"ti-chart-histogram",
    what:"Bar chart + cumulative line. Pareto Principle: 80% problems đến từ 20% causes. Giúp focus vào vital few.",
    when:["Prioritize defects để fix","Identify top causes sau quality review","Focus improvement efforts"],
    avoid:["Fix theo alphabetical hoặc easiest first","Ignore rare causes — đôi khi gây critical failure"],
@@ -406,7 +435,7 @@ const TD = [
    example:"100 bugs: UI 45, API 30, Perf 15, Auth 7, Others 3 → Fix UI + API = 75% → focus 2 areas.",
    pmpNote:"80/20 rule — focus on vital few, not trivial many."},
 
-  {id:"control-charts",name:"Control Charts",type:"Tool",cats:["quality"],icon:"ti-activity",
+  {id:"control-charts",appUrl:"#",name:"Control Charts",type:"Tool",cats:["quality"],icon:"ti-activity",
    what:"Biểu đồ theo dõi process performance theo thời gian với UCL/LCL. Phát hiện khi process out of control.",
    when:["Monitor repetitive processes","Detect special cause variation","Quality control trong testing"],
    avoid:["Confuse Control Limits (statistical) với Specification Limits (customer)","React mọi data point — chỉ react khi out-of-control signals"],
@@ -422,7 +451,7 @@ const TD = [
    combine:["fishbone","pareto"],
    pmpNote:"PMP principle: Prevention over Inspection. COQ dùng để argue cho invest vào quality processes."},
 
-  {id:"benchmarking",name:"Benchmarking",type:"Technique",cats:["quality"],icon:"ti-trophy",
+  {id:"benchmarking",appUrl:"#",name:"Benchmarking",type:"Technique",cats:["quality"],icon:"ti-trophy",
    what:"So sánh processes/metrics với industry standards hoặc best-in-class để identify improvement opportunities.",
    when:["Set realistic quality targets","Identify process improvement opportunities","Justify process changes với data"],
    avoid:["Benchmark với wrong peers — industry khác","Implement best practices mà không adapt cho context"],
@@ -430,7 +459,7 @@ const TD = [
    combine:["expert-judgment","meetings"]},
 
   // ── RESOURCE & TEAM ──
-  {id:"tuckman",appUrl:"pm-tools-advisor.html",name:"Tuckman Ladder",type:"Tool",cats:["resource"],icon:"ti-stairs",
+  {id:"tuckman",appUrl:"#",name:"Tuckman Ladder",type:"Tool",cats:["resource"],icon:"ti-stairs",
    what:"5 stages phát triển team: Forming → Storming → Norming → Performing → Adjourning. PM adjust leadership style theo stage.",
    when:["Assess team dynamics","Khi team có performance issues","Onboard new members"],
    avoid:["Assume team tự nhiên reach Performing","Skip Storming — một số conflict là healthy"],
@@ -439,7 +468,7 @@ const TD = [
    example:"Sprint 1-2: Forming. Sprint 3-4: Storming → facilitated session. Sprint 5+: Norming → velocity stabilizes.",
    pmpNote:"Storming không phải bad sign — là natural và necessary."},
 
-  {id:"conflict-resolution",name:"Conflict Resolution",type:"Technique",cats:["resource","facilitation"],icon:"ti-handshake",
+  {id:"conflict-resolution",appUrl:"#",name:"Conflict Resolution",type:"Technique",cats:["resource","facilitation"],icon:"ti-handshake",
    what:"5 phương pháp: Collaborate, Compromise, Accommodate, Avoid, Force. Từ win-win đến lose-lose.",
    when:["Team conflicts ảnh hưởng performance","Conflicting stakeholder interests","Resource allocation disputes"],
    avoid:["Force — chỉ dùng khi safety/ethics bị đe dọa","Smooth/Avoid mà không address root cause"],
@@ -454,7 +483,7 @@ const TD = [
    steps:["Coaching: Active listening → Powerful questions → Let them find answer → Support action","Mentoring: Share experience → Guidance → Connect to network → Check-in","Document development plan","Track progress và celebrate wins"],
    combine:["tuckman","retrospective"]},
 
-  {id:"raci",name:"RACI Matrix",type:"Tool",cats:["resource","communication"],icon:"ti-table",
+  {id:"raci",appUrl:"#",name:"RACI Matrix",type:"Tool",cats:["resource","communication"],icon:"ti-table",
    what:"Responsibility Assignment Matrix: Responsible, Accountable, Consulted, Informed cho từng task/deliverable.",
    when:["Clarify roles và responsibilities","Khi có confusion về ai làm gì","Multi-team projects"],
    avoid:["Nhiều hơn 1 Accountable cho 1 task","Quá nhiều Consulted — tạo bottleneck","RACI quá granular"],
@@ -487,7 +516,7 @@ const TD = [
    example:"Support: Backlog → Triaged → In Progress (WIP=3) → Review → Done. WIP limit reached → help unblock trước khi pull new."},
 
   // ── RISK ──
-  {id:"risk-matrix",appUrl:"pm-tools-advisor.html",name:"Probability & Impact Matrix",type:"Tool",cats:["risk"],icon:"ti-grid-dots",
+  {id:"risk-matrix",appUrl:"#",name:"Probability & Impact Matrix",type:"Tool",cats:["risk"],icon:"ti-grid-dots",
    what:"Matrix 2D đánh giá risks theo Probability và Impact → risk score → prioritize response. Qualitative Risk Analysis.",
    when:["Sau khi identify risks","Allocate risk response resources","Risk review meetings"],
    avoid:["Assign P và I theo cảm tính","Treat medium risks như low"],
@@ -535,7 +564,7 @@ const TD = [
    combine:["risk-matrix","brainstorming"]},
 
   // ── PROCUREMENT ──
-  {id:"make-or-buy",name:"Make-or-Buy Analysis",type:"Technique",cats:["procurement"],icon:"ti-scale",
+  {id:"make-or-buy",appUrl:"#",name:"Make-or-Buy Analysis",type:"Technique",cats:["procurement"],icon:"ti-scale",
    what:"Quyết định build in-house hay mua/outsource. Xét cost, capability, time, IP risk, strategic fit.",
    when:["Cần component/service có thể build hoặc buy","Outsource vs in-house decision"],
    avoid:["Chỉ so sánh cost — bỏ qua strategic factors","Ignore hidden costs: management overhead, knowledge transfer"],
@@ -544,7 +573,7 @@ const TD = [
    example:"IoT analytics: Make (3 months, $40K, unfamiliar ML) vs Buy (AWS, $500/month, 2 weeks) → Buy.",
    pmpNote:"Make-or-buy không chỉ là cost decision. Strategic fit và IP protection thường quan trọng hơn."},
 
-  {id:"contract-types",name:"Contract Types",type:"Tool",cats:["procurement"],icon:"ti-file-invoice",
+  {id:"contract-types",appUrl:"#",name:"Contract Types",type:"Tool",cats:["procurement"],icon:"ti-file-invoice",
    what:"Fixed Price (FP), Cost Reimbursable (CR), Time & Material (T&M). Risk allocation khác nhau cho từng loại.",
    when:["Procurement planning","Vendor negotiation","Assess risk tolerance của cả hai bên"],
    avoid:["Chọn vì đó là loại hay dùng mà không evaluate risk","FP khi scope chưa clear — recipe for disputes"],
@@ -561,7 +590,7 @@ const TD = [
    example:"Vendor tăng giá 20% → research market: chỉ tăng 8% → offer longer commitment → settle ở 10% với 2-year lock-in."},
 
   // ── STAKEHOLDER ──
-  {id:"seam",appUrl:"pm-tools-advisor.html",name:"Stakeholder Engagement Matrix",type:"Tool",cats:["stakeholder"],icon:"ti-chart-radar",
+  {id:"seam",appUrl:"#",name:"Stakeholder Engagement Matrix",type:"Tool",cats:["stakeholder"],icon:"ti-chart-radar",
    what:"SEAM — Track current vs desired engagement: Unaware → Resistant → Neutral → Supportive → Leading. Gap = action needed.",
    when:["Stakeholder planning","Monitor engagement trong execution","Detect resistance hoặc low engagement"],
    avoid:["Update chỉ ở đầu dự án","Target Leading cho tất cả — unrealistic"],
@@ -570,7 +599,7 @@ const TD = [
    example:"CFO: Current=Resistant, Desired=Supportive → 1-on-1, present ROI model → re-assess → moved to Neutral.",
    pmpNote:"SEAM + Power-Interest Grid thường ra cùng nhau trong PMP. C = current, D = desired."},
 
-  {id:"power-interest",name:"Power-Interest Grid",type:"Tool",cats:["stakeholder"],icon:"ti-grid-4x4",
+  {id:"power-interest",appUrl:"#",name:"Power-Interest Grid",type:"Tool",cats:["stakeholder"],icon:"ti-grid-4x4",
    what:"2x2 matrix phân loại stakeholders theo Power và Interest → 4 engagement strategies.",
    when:["Initiating/Planning — identify và prioritize stakeholders","Khi có nhiều stakeholders"],
    avoid:["Treat như static document","Over-share nội bộ — stakeholders có thể offended"],
@@ -595,21 +624,21 @@ const TD = [
    combine:["agile-backlog","story-points","definition-of-done"],
    pmpNote:"User Stories = Agile equivalent của requirements. PMP 7th edition include Agile extensively."},
 
-  {id:"story-points",name:"Story Points & Velocity",type:"Tool",cats:["agile"],icon:"ti-numbers",
+  {id:"story-points",appUrl:"#",name:"Story Points & Velocity",type:"Tool",cats:["agile"],icon:"ti-numbers",
    what:"Story Points: relative measure of effort. Velocity: avg points/sprint. Dùng để forecast release date.",
    when:["Sprint planning: estimate stories","Release planning: forecast completion","Identify capacity issues"],
    avoid:["Convert story points sang hours","Compare velocity giữa teams — context khác nhau"],
    steps:["Calibrate: assign points cho reference stories (simple=1–2, medium=5, complex=13)","Fibonacci-like scale: 1, 2, 3, 5, 8, 13, 21","Planning Poker: estimate riêng, discuss outliers","Track velocity qua 3+ sprints","Forecast: Remaining Points / Velocity = Sprints left"],
    combine:["user-stories","agile-backlog"]},
 
-  {id:"definition-of-done",name:"Definition of Done (DoD)",type:"Tool",cats:["agile","quality"],icon:"ti-circle-check",
+  {id:"definition-of-done",appUrl:"#",name:"Definition of Done (DoD)",type:"Tool",cats:["agile","quality"],icon:"ti-circle-check",
    what:"Shared checklist về điều kiện phải satisfied trước khi item được coi là Done. Đảm bảo quality nhất quán.",
    when:["Team setup — trước sprint đầu tiên","Khi có quality issues","Khi stakeholders không đồng ý về complete"],
    avoid:["DoD quá lax: chỉ code written","DoD quá strict: impossible trong 1 sprint","Không được team agree"],
    steps:["Workshop với team để define criteria","Include: code written, unit tested, code reviewed, integration tested, docs updated, PO accepted","Post DoD ở chỗ mọi người thấy","Apply consistently cho mọi story","Review và update ở retrospectives"],
    combine:["user-stories","retrospective","kanban"]},
 
-  {id:"retrospective",appUrl:"pm-tools-advisor.html",name:"Retrospective",type:"Technique",cats:["agile","resource"],icon:"ti-refresh-alert",
+  {id:"retrospective",appUrl:"#",name:"Retrospective",type:"Technique",cats:["agile","resource"],icon:"ti-refresh-alert",
    what:"Session cuối sprint: What went well? What did not? What to improve? Cơ chế continuous improvement cốt lõi của Agile.",
    when:["Cuối mỗi sprint — không bỏ","Sau major incidents","Khi team dynamics có vấn đề"],
    avoid:["Retro thành blame session","Action items không có owner/deadline","PM dominate — đây là team's session"],
@@ -755,8 +784,8 @@ function render() {
     }).join("");
     const preview = t.what.length > 100 ? t.what.slice(0,100) + "…" : t.what;
     const appBtnHtml = t.appUrl
-      ? `<span class="app-btn" onclick="openApp('${t.appUrl}',event)"><i class="ti ti-external-link" style="font-size:11px"></i>Mở App</span>`
-      : `<span class="app-btn planned" onclick="openApp(null,event)"><i class="ti ti-clock" style="font-size:11px"></i>App đang xây dựng</span>`;
+      ? `<button class="app-btn" onclick="openApp('${t.appUrl}',event)"><i class="ti ti-external-link" style="font-size:15px"></i>Mở App</button>`
+      : ``;
     return `<div class="tc" onclick="openD('${t.id}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openD('${t.id}')">
       <div class="ctop">
         <div class="cicon"><i class="ti ${t.icon || 'ti-tool'}"></i></div>
@@ -836,8 +865,8 @@ function openD(id) {
 
   // App button in drawer
   const drawerAppBtn = t.appUrl
-    ? `<a class="app-btn-lg" onclick="openApp('${t.appUrl}',event)"><i class="ti ti-external-link"></i>Mở trang App cho tool này</a>`
-    : `<div class="app-btn-lg planned" onclick="openApp(null,event)"><i class="ti ti-clock"></i>App đang được xây dựng</div>`;
+    ? `<button class="app-btn-lg" onclick="openApp('${t.appUrl}',event)"><i class="ti ti-external-link" style="font-size:15px"></i>Mở trang App của tool này</button>`
+    : ``;
   h += `<div class="dv"></div><div class="ds">${drawerAppBtn}</div>`;
   h += `<div style="padding:.5rem 0 .5rem;text-align:center"><button onclick="closeD()" style="background:transparent;border:1px solid var(--bd2);border-radius:7px;padding:8px 24px;font-size:13px;font-weight:500;color:var(--tx2);cursor:pointer;font-family:'DM Sans',sans-serif">Đóng</button></div>`;
 
