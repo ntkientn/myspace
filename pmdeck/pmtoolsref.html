@@ -111,6 +111,19 @@ body{font-family:"DM Sans",sans-serif;color:var(--tx);background:var(--bg);min-h
 .pmp{background:var(--or-bg);border-left:3px solid var(--or-bd);border-radius:0 var(--r-sm) var(--r-sm) 0;padding:10px 13px;font-size:13px;color:var(--or-tx);line-height:1.6}
 .ph{padding:1.5rem 1rem;font-size:13.5px;color:var(--tx2);line-height:1.65}
 .footer{margin-top:3rem;text-align:center;font-size:12px;color:var(--tx3);padding-top:1rem;border-top:1px solid var(--bd)}
+
+/* App button */
+.app-btn{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid var(--gn-bd);background:var(--gn-bg);color:var(--gn-dk);cursor:pointer;transition:all .15s;white-space:nowrap;text-decoration:none}
+.app-btn:hover{background:var(--gn);color:#fff;border-color:var(--gn)}
+.app-btn.planned{border-color:var(--or-bd);background:var(--or-bg);color:var(--or-tx)}
+.app-btn.planned:hover{background:var(--or-bd);color:#fff;border-color:var(--or-bd)}
+.app-btn-lg{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:var(--r-sm);font-size:13px;font-weight:500;border:1px solid var(--gn-bd);background:var(--gn-bg);color:var(--gn-dk);cursor:pointer;transition:all .15s;text-decoration:none;width:100%;justify-content:center;margin-bottom:8px}
+.app-btn-lg:hover{background:var(--gn);color:#fff}
+.app-btn-lg.planned{border-color:var(--or-bd);background:var(--or-bg);color:var(--or-tx)}
+.app-btn-lg.planned:hover{background:var(--or-bd);color:#fff}
+/* Toast popup */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a1a2e;color:#fff;padding:10px 18px;border-radius:var(--r-sm);font-size:13px;font-weight:500;z-index:999;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.25)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
@@ -146,7 +159,7 @@ body{font-family:"DM Sans",sans-serif;color:var(--tx);background:var(--bg);min-h
       <div class="dht">
         <div class="dico"><i class="ti ti-book-2"></i></div>
         <div class="dtit" id="dtit">Tool Guide</div>
-        <button class="dcl" onclick="closeDrawer()"><i class="ti ti-x"></i></button>
+        <button class="dcl" onclick="closeD()"><i class="ti ti-x"></i></button>
       </div>
       <div class="dmeta" id="dm"></div>
     </div>
@@ -176,12 +189,12 @@ const CATS = [
 /* ==========================================================
    TOOLS DATA
    Mỗi tool = 1 object. Để thêm/xoá/sửa chỉ cần edit object này.
-   Fields: id*, name*, type*, cats*, icon*, what*, when, avoid, steps, combine, example, pmpNote
+   Fields: id*, name*, type*, cats*, icon*, what*, when, avoid, steps, combine, example, pmpNote, appUrl
    (*) = required
    ========================================================== */
 const TD = [
   // ── INTEGRATION ──
-  {id:"expert-judgment",name:"Expert Judgment",type:"Technique",cats:["integration","scope","schedule","cost","risk","facilitation"],icon:"ti-user-check",
+  {id:"expert-judgment",appUrl:"pm-tools-advisor.html",name:"Expert Judgment",type:"Technique",cats:["integration","scope","schedule","cost","risk","facilitation"],icon:"ti-user-check",
    what:"Tham vấn ý kiến từ người có chuyên môn — internal SME, external consultant, hoặc chính PM dựa trên kinh nghiệm.",
    when:["Cần quyết định nhanh mà không đủ data","Estimate cost/schedule khi chưa có precedent","Evaluate technical options ngoài tầm PM"],
    avoid:["Thay thế hoàn toàn data-driven analysis khi data có sẵn","Chỉ hỏi 1 expert cho quyết định high-stakes"],
@@ -190,7 +203,7 @@ const TD = [
    example:"PM estimate module AI mới → mời Tech Lead + external consultant → record estimate range + assumptions → dùng PERT để ra con số chính thức.",
    pmpNote:"Expert Judgment xuất hiện trong hầu hết processes. PMP hay hỏi 'PM nên làm gì đầu tiên?' — Expert Judgment thường là bước đầu khi chưa có thông tin."},
 
-  {id:"meetings",name:"Meetings & Facilitation",type:"Technique",cats:["integration","communication","facilitation"],icon:"ti-users",
+  {id:"meetings",appUrl:"pm-tools-advisor.html",name:"Meetings & Facilitation",type:"Technique",cats:["integration","communication","facilitation"],icon:"ti-users",
    what:"Structured meeting với agenda rõ ràng, facilitator điều phối, output cụ thể. Kỹ thuật có chủ đích, không phải mọi cuộc họp.",
    when:["Cần align nhiều stakeholder cùng lúc","Giải quyết conflict hoặc ambiguity","Kick-off, retrospective, decision-making sessions"],
    avoid:["Meeting không có agenda","Meeting không có action items và owner","Meeting thay thế async update khi không cần real-time"],
@@ -208,7 +221,7 @@ const TD = [
    example:"Chọn cloud vendor: Criteria = Cost 30%, Security 25%, Support 20%, Scalability 25%. Score AWS vs Azure vs GCP → present kết quả với sponsor.",
    pmpNote:"MCDA đặc biệt hữu ích để tránh bias và có thể defend với sponsor bằng data."},
 
-  {id:"change-control",name:"Change Control Tools",type:"Tool",cats:["integration"],icon:"ti-git-branch",
+  {id:"change-control",appUrl:"pm-tools-advisor.html",name:"Change Control Tools",type:"Tool",cats:["integration"],icon:"ti-git-branch",
    what:"Hệ thống quy trình submit, evaluate, approve/reject thay đổi về scope/schedule/cost. Gồm CR form, CCB, change log.",
    when:["Bất kỳ thay đổi nào so với approved baseline","Stakeholder yêu cầu thêm feature","Phát hiện deviation trong execution"],
    avoid:["Approve change verbally không có documentation","Bypass CCB vì urgent","Implement trước khi có formal approval"],
@@ -295,7 +308,7 @@ const TD = [
    pmpNote:"Rolling wave = progressive elaboration trong practice. Phổ biến trong Hybrid và large Agile programs."},
 
   // ── SCHEDULE ──
-  {id:"pert",name:"Three-point Estimating (PERT)",type:"Tool",cats:["schedule","cost"],icon:"ti-math",
+  {id:"pert",appUrl:"pm-tools-advisor.html",name:"Three-point Estimating (PERT)",type:"Tool",cats:["schedule","cost"],icon:"ti-math",
    what:"Estimation dùng 3 điểm: Optimistic (O), Most Likely (M), Pessimistic (P). Formula: E = (O + 4M + P) / 6.",
    when:["Uncertainty cao, chưa có precedent","Cần communicate estimate range","Schedule/cost có risk cao"],
    avoid:["Dùng cho tasks đơn giản — overkill","Bỏ qua P (pessimistic)"],
@@ -304,7 +317,7 @@ const TD = [
    example:"Payment gateway: O=3d, M=5d, P=12d → E=5.8d, SD=1.5 → 95% range: 2.8–8.8d → PM schedule 7 days.",
    pmpNote:"Công thức PERT hay ra trong exam: E = (O + 4M + P) / 6. SD = (P - O) / 6. 1σ=68%, 2σ=95%, 3σ=99.7%."},
 
-  {id:"cpm",name:"Critical Path Method (CPM)",type:"Tool",cats:["schedule"],icon:"ti-route",
+  {id:"cpm",appUrl:"pm-tools-advisor.html",name:"Critical Path Method (CPM)",type:"Tool",cats:["schedule"],icon:"ti-route",
    what:"Xác định chuỗi task dài nhất trong network — Critical Path có zero float. Delay trên CP = project delay.",
    when:["Planning — bắt buộc trong Waterfall","Xác định tasks quan trọng nhất để monitor","Schedule compression"],
    avoid:["Ignore near-critical paths (float dưới 3 ngày)","Không update khi scope/resource thay đổi"],
@@ -356,7 +369,7 @@ const TD = [
    example:"Past: 3 days/screen. New app: 24 screens → 72 days. 3 complex screens x 1.5 → revised 78 days."},
 
   // ── COST ──
-  {id:"evm",name:"Earned Value Management",type:"Tool",cats:["cost","schedule"],icon:"ti-chart-bar",
+  {id:"evm",appUrl:"pm-tools-advisor.html",name:"Earned Value Management",type:"Tool",cats:["cost","schedule"],icon:"ti-chart-bar",
    what:"EVM — Framework đo lường performance tích hợp scope + schedule + cost. Dùng PV, EV, AC để tính metrics.",
    when:["Monitoring & Controlling — dùng liên tục","Report performance cho sponsor","Forecast completion cost và date"],
    avoid:["Báo cáo chỉ % complete mà không có EV","Confuse EV với AC: EV = value of work done, AC = actual cost"],
@@ -417,7 +430,7 @@ const TD = [
    combine:["expert-judgment","meetings"]},
 
   // ── RESOURCE & TEAM ──
-  {id:"tuckman",name:"Tuckman Ladder",type:"Tool",cats:["resource"],icon:"ti-stairs",
+  {id:"tuckman",appUrl:"pm-tools-advisor.html",name:"Tuckman Ladder",type:"Tool",cats:["resource"],icon:"ti-stairs",
    what:"5 stages phát triển team: Forming → Storming → Norming → Performing → Adjourning. PM adjust leadership style theo stage.",
    when:["Assess team dynamics","Khi team có performance issues","Onboard new members"],
    avoid:["Assume team tự nhiên reach Performing","Skip Storming — một số conflict là healthy"],
@@ -474,7 +487,7 @@ const TD = [
    example:"Support: Backlog → Triaged → In Progress (WIP=3) → Review → Done. WIP limit reached → help unblock trước khi pull new."},
 
   // ── RISK ──
-  {id:"risk-matrix",name:"Probability & Impact Matrix",type:"Tool",cats:["risk"],icon:"ti-grid-dots",
+  {id:"risk-matrix",appUrl:"pm-tools-advisor.html",name:"Probability & Impact Matrix",type:"Tool",cats:["risk"],icon:"ti-grid-dots",
    what:"Matrix 2D đánh giá risks theo Probability và Impact → risk score → prioritize response. Qualitative Risk Analysis.",
    when:["Sau khi identify risks","Allocate risk response resources","Risk review meetings"],
    avoid:["Assign P và I theo cảm tính","Treat medium risks như low"],
@@ -491,7 +504,7 @@ const TD = [
    combine:["pert","reserve-analysis"],
    example:"Dự án 6 tháng → Monte Carlo → P50: 6.2th, P80: 7.1th → PM presents: '80% chance finish by 7.1 months'."},
 
-  {id:"swot",name:"SWOT Analysis",type:"Tool",cats:["risk"],icon:"ti-layout-2",
+  {id:"swot",appUrl:"SWOT.html",name:"SWOT Analysis",type:"Tool",cats:["risk"],icon:"ti-layout-2",
    what:"Strengths, Weaknesses, Opportunities, Threats — framework identify risks và opportunities toàn diện.",
    when:["Risk identification sessions","Project initiation","Strategic planning và go/no-go"],
    avoid:["Dừng ở liệt kê — phải action từ SWOT","Confuse internal (SW) với external (OT)"],
@@ -548,7 +561,7 @@ const TD = [
    example:"Vendor tăng giá 20% → research market: chỉ tăng 8% → offer longer commitment → settle ở 10% với 2-year lock-in."},
 
   // ── STAKEHOLDER ──
-  {id:"seam",name:"Stakeholder Engagement Matrix",type:"Tool",cats:["stakeholder"],icon:"ti-chart-radar",
+  {id:"seam",appUrl:"pm-tools-advisor.html",name:"Stakeholder Engagement Matrix",type:"Tool",cats:["stakeholder"],icon:"ti-chart-radar",
    what:"SEAM — Track current vs desired engagement: Unaware → Resistant → Neutral → Supportive → Leading. Gap = action needed.",
    when:["Stakeholder planning","Monitor engagement trong execution","Detect resistance hoặc low engagement"],
    avoid:["Update chỉ ở đầu dự án","Target Leading cho tất cả — unrealistic"],
@@ -596,7 +609,7 @@ const TD = [
    steps:["Workshop với team để define criteria","Include: code written, unit tested, code reviewed, integration tested, docs updated, PO accepted","Post DoD ở chỗ mọi người thấy","Apply consistently cho mọi story","Review và update ở retrospectives"],
    combine:["user-stories","retrospective","kanban"]},
 
-  {id:"retrospective",name:"Retrospective",type:"Technique",cats:["agile","resource"],icon:"ti-refresh-alert",
+  {id:"retrospective",appUrl:"pm-tools-advisor.html",name:"Retrospective",type:"Technique",cats:["agile","resource"],icon:"ti-refresh-alert",
    what:"Session cuối sprint: What went well? What did not? What to improve? Cơ chế continuous improvement cốt lõi của Agile.",
    when:["Cuối mỗi sprint — không bỏ","Sau major incidents","Khi team dynamics có vấn đề"],
    avoid:["Retro thành blame session","Action items không có owner/deadline","PM dominate — đây là team's session"],
@@ -650,6 +663,23 @@ const TD = [
    ========================================================== */
 let activeFilter = "all";
 let searchQuery  = "";
+
+function openApp(url, event) {
+  if (event) event.stopPropagation();
+  if (url) {
+    window.open(url, '_blank');
+  } else {
+    showToast('🚧 Trang app đang được xây dựng, chưa hoạt động');
+  }
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
 
 function init() {
   buildStats();
@@ -724,6 +754,9 @@ function render() {
       return `<span class="ct cat-${c}">${cat ? cat.label : c}</span>`;
     }).join("");
     const preview = t.what.length > 100 ? t.what.slice(0,100) + "…" : t.what;
+    const appBtnHtml = t.appUrl
+      ? `<span class="app-btn" onclick="openApp('${t.appUrl}',event)"><i class="ti ti-external-link" style="font-size:11px"></i>Mở App</span>`
+      : `<span class="app-btn planned" onclick="openApp(null,event)"><i class="ti ti-clock" style="font-size:11px"></i>App đang xây dựng</span>`;
     return `<div class="tc" onclick="openD('${t.id}')" role="button" tabindex="0" onkeydown="if(event.key==='Enter')openD('${t.id}')">
       <div class="ctop">
         <div class="cicon"><i class="ti ${t.icon || 'ti-tool'}"></i></div>
@@ -733,6 +766,7 @@ function render() {
       <div class="ctype">${t.type}</div>
       <div class="ctags">${tags}</div>
       <div class="cwhat">${preview}</div>
+      <div style="margin-top:2px">${appBtnHtml}</div>
     </div>`;
   }).join("");
 }
@@ -800,7 +834,12 @@ function openD(id) {
     h += `<div class="ds" style="margin-top:1rem"><div class="dst"><i class="ti ti-certificate"></i>PMP Exam Note</div><div class="pmp">${t.pmpNote}</div></div>`;
   }
 
-  h += `<div style="padding:1.25rem 0 .5rem;text-align:center"><button onclick="closeD()" style="background:transparent;border:1px solid var(--bd2);border-radius:7px;padding:8px 24px;font-size:13px;font-weight:500;color:var(--tx2);cursor:pointer;font-family:'DM Sans',sans-serif">Đóng</button></div>`;
+  // App button in drawer
+  const drawerAppBtn = t.appUrl
+    ? `<a class="app-btn-lg" onclick="openApp('${t.appUrl}',event)"><i class="ti ti-external-link"></i>Mở trang App cho tool này</a>`
+    : `<div class="app-btn-lg planned" onclick="openApp(null,event)"><i class="ti ti-clock"></i>App đang được xây dựng</div>`;
+  h += `<div class="dv"></div><div class="ds">${drawerAppBtn}</div>`;
+  h += `<div style="padding:.5rem 0 .5rem;text-align:center"><button onclick="closeD()" style="background:transparent;border:1px solid var(--bd2);border-radius:7px;padding:8px 24px;font-size:13px;font-weight:500;color:var(--tx2);cursor:pointer;font-family:'DM Sans',sans-serif">Đóng</button></div>`;
 
   const db = document.getElementById("db");
   db.innerHTML = h;
@@ -814,5 +853,6 @@ document.addEventListener("keydown", e => { if (e.key === "Escape") closeD(); })
 
 init();
 </script>
+<div class="toast" id="toast"></div>
 </body>
 </html>
