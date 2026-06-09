@@ -120,11 +120,11 @@
         .link-back-webnet {
             display: inline-flex;
             align-items: center;
-            gap: 10px; /* Khoảng cách giữa icon mũi tên và chữ */
-            color: #64748b; /* Mặc định là màu xám mờ tinh tế, không làm phân tâm */
+            gap: 8px; /* Khoảng cách giữa icon mũi tên và chữ */
+            color: #8fb8ca; /* Mặc định là màu xám mờ tinh tế, không làm phân tâm */
             font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.9rem;
-            font-weight: 600;
+            font-size: 0.7rem;
+            font-weight: 400;
             letter-spacing: 0.08em; /* Giãn chữ nhẹ chuẩn style giao diện hiện đại */
             text-decoration: none;
             transition: all 0.3s ease;
@@ -133,7 +133,7 @@
         
         /* HIỆU ỨNG HOVER: Chữ và icon đổi sắc xanh Cyan và phát sáng nhẹ */
         .link-back-webnet:hover {
-            color: #22d3ee;
+            color: #36c8df;
             text-shadow: 0 0 8px rgba(34, 211, 238, 0.6);
             transform: translateX(-2px); /* Nhẹ nhàng dịch sang trái 1 chút tạo hiệu ứng chỉ đường */
         }
@@ -147,7 +147,7 @@
         <div id="dashboard-view" class="max-w-4xl mx-auto px-4 py-6 tech-grid min-height-screen">
         <header class="text-center mb-8 relative">
             
-            <div class="w-full flex justify-center md:justify-start px-1 pt-1 relative z-[9999]">
+            <div class="w-full flex justify-left md:justify-start px-1 pt-1 relative z-[9999]">
                 <a href="https://ntkientn.github.io/mypage/webnet.html" class="link-back-webnet">
                     <i class="fa-solid fa-arrow-left-long"></i>
                     <span>Back to WebNet</span>
@@ -1368,19 +1368,66 @@
                     startAutoplay();
                 }
             }
+            // HÀM ĐIỀU KHIỂN ĐÓNG/MỞ LIGHTBOX PHÓNG TO ẢNH
+            window.openLightbox = function(imgSrc) {
+                const lightbox = document.getElementById('image-lightbox');
+                const lightboxImg = document.getElementById('lightbox-img');
+                if (!lightbox || !lightboxImg) return;
 
-            // ÉP TRÌNH DUYỆT LẮNG NGHE LỆNH BẰNG CHẾ ĐỘ CAPTURE (TRUE)
+                lightboxImg.src = imgSrc;
+                lightbox.classList.remove('hidden');
+                lightbox.classList.add('flex');
+                
+                setTimeout(() => {
+                    lightbox.classList.remove('opacity-0');
+                    lightbox.querySelector('div').classList.remove('scale-95');
+                    lightbox.querySelector('div').classList.add('scale-100');
+                }, 10);
+            };
+
+            window.closeLightbox = function() {
+                const lightbox = document.getElementById('image-lightbox');
+                if (!lightbox) return;
+                const modalContent = lightbox.querySelector('div');
+                
+                lightbox.classList.add('opacity-0');
+                if (modalContent) {
+                    modalContent.classList.remove('scale-100');
+                    modalContent.classList.add('scale-95');
+                }
+                
+                setTimeout(() => {
+                    lightbox.classList.remove('flex');
+                    lightbox.classList.add('hidden');
+                }, 300);
+            };
+            // SỬA LẠI SỰ KIỆN: CHỐNG TRÙNG LẶP TRÊN MOBILE & CHỈ PHÓNG TO KHI CLICK ẢNH GIỮA
             items.forEach((item, index) => {
                 // Hỗ trợ Chuột trên PC/Mac
                 item.addEventListener('click', function(e) {
+                    // Nếu là sự kiện giả lập từ touch thì bỏ qua
+                    if (e.pointerType === 'touch') return; 
                     e.stopPropagation();
-                    handleSelection(index);
+                    
+                    if (index === currentIndex) {
+                        const imgSrc = this.querySelector('img').src;
+                        openLightbox(imgSrc);
+                    } else {
+                        handleSelection(index);
+                    }
                 }, true);
 
-                // Hỗ trợ Chạm cảm ứng trên Mobile/Tablet (Bắt lệnh tức thì)
+                // Hỗ trợ Chạm cảm ứng trên Mobile (Ngăn chặn triệt để lỗi tự đóng)
                 item.addEventListener('touchend', function(e) {
+                    e.preventDefault(); // Ngăn không cho sinh thêm sự kiện 'click' sau đó
                     e.stopPropagation();
-                    handleSelection(index);
+                    
+                    if (index === currentIndex) {
+                        const imgSrc = this.querySelector('img').src;
+                        openLightbox(imgSrc);
+                    } else {
+                        handleSelection(index);
+                    }
                 }, true);
             });
 
@@ -1401,5 +1448,20 @@
             }
         });
     </script>
+    <!-- LIGHTBOX MODAL PHÓNG TO ẢNH GIỮA (ĐÃ KHÓA SAVE/COPY) -->
+    <div id="image-lightbox" class="fixed inset-0 z-[9999] hidden items-center justify-center bg-slate-950/85 backdrop-blur-md opacity-0 transition-opacity duration-300 select-none" onclick="closeLightbox()">
+        <div class="relative max-w-[90vw] max-h-[85vh] transform scale-95 transition-transform duration-300" onclick="event.stopPropagation()">
+            <!-- Thêm oncontextmenu, pointer-events d-none và draggable để chặn copy/save -->
+            <img id="lightbox-img" src="" alt="Zoomed Image" 
+                 class="w-full h-auto max-h-[85vh] object-contain rounded-2xl shadow-[0_0_40px_rgba(34,211,238,0.3)] border border-slate-800 select-none pointer-events-none" 
+                 draggable="false"
+                 oncontextmenu="return false;"
+                 onclick="closeLightbox()">
+            <!-- Nút Close -->
+            <button onclick="closeLightbox()" class="absolute -top-12 right-0 text-slate-400 hover:text-cyan-400 text-xs font-semibold tracking-widest uppercase flex items-center gap-2 transition-colors cursor-pointer select-none">
+                <span>Close</span> <i class="fa-solid fa-xmark text-sm"></i>
+            </button>
+        </div>
+    </div>
 </body>
 </html>
