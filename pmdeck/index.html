@@ -104,8 +104,8 @@
             gap: 0.6rem;
             color: var(--accent-cyan);
             text-decoration: none;
-            font-size: 0.95rem;
-            font-weight: 600;
+            font-size: 0.90rem;
+            font-weight: 400;
             margin-bottom: 1.5rem;
             transition: all 0.2s ease;
             width: fit-content;
@@ -320,7 +320,7 @@
     <div class="container">
         <!-- BACK TO WEB NET PAGE -->
         <a href="https://ntkientn.github.io/mypage/webnet.html" class="back-to-hub">
-            <i class="fa-solid fa-arrow-left"></i> Kien WebNet 
+            <i class="fa-solid fa-arrow-left"></i> Back to WebNet 
         </a>
 
         <!-- BOARD HEADER -->
@@ -368,6 +368,14 @@
 
             // GROUP 2: INTERACTIVE APPS
             {
+                title: "SWOT Matrix Analytics",
+                description: "Ma trận tương tác phân tích Điểm mạnh, Điểm yếu, Cơ hội & Thách thức cho dự án số hóa.",
+                url: "https://ntkientn.github.io/mypage/pmdeck/SWOT.html",
+                icon: "fa-table-cells-large",
+                group: "apps",
+                status: "coming"
+            },
+            {
                 title: "Earned Value Control (EV/PV/AC)",
                 description: "Ứng dụng tương tác tính toán nhanh các chỉ số sức khỏe dự án: CV, SV, CPI, SPI và dự báo EAC.",
                 url: "#",
@@ -380,14 +388,6 @@
                 description: "Mô phỏng và đo lường tốc độ phân phối của Team, tối ưu hóa kế hoạch Sprint kế tiếp.",
                 url: "#",
                 icon: "fa-chart-line",
-                group: "apps",
-                status: "coming"
-            },
-            {
-                title: "SWOT Matrix Analytics",
-                description: "Ma trận tương tác phân tích Điểm mạnh, Điểm yếu, Cơ hội & Thách thức cho dự án số hóa.",
-                url: "https://ntkientn.github.io/mypage/pmdeck/SWOT.html",
-                icon: "fa-table-cells-large",
                 group: "apps",
                 status: "coming"
             },
@@ -467,7 +467,7 @@
                 // Vòng lặp chèn các thẻ Card theo chiều dọc của từng Cột
                 columnModules.forEach(mod => {
                     const isActive = mod.status === 'active';
-                    const statusText = isActive ? "Ready" : "Coming Soon";
+                    const statusText = isActive ? "Active" : "Coming Soon";
                     const statusColor = isActive ? "var(--color-active)" : "var(--color-coming)";
 
                     columnHTML += `
