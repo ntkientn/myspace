@@ -478,7 +478,7 @@
         /* 1. KHÓA CỐ ĐỊNH TRÊN MÁY TÍNH (DESKTOP)                  */
         /* ======================================================== */
         
-        /* Ép nút bấm luôn ghim vào góc màn hình hiển thị */
+        /* Ghim chặt nút bấm chat ở góc phải dưới màn hình */
         html body #dify-chatbot-bubble-button {
             background-color: #1C64F2 !important;
             position: fixed !important;
@@ -487,31 +487,29 @@
             z-index: 999999 !important;
             top: auto !important;
             left: auto !important;
-            transform: none !important;
         }
         
-        /* Ép cửa sổ chat ghim cứng ngay TRÊN nút bấm, không trôi xuống bottom page */
+        /* Ghim chặt cửa sổ chat và ép kích thước cố định (Chống bị resize sau 1-2s) */
         html body #dify-chatbot-bubble-window {
-            position: fixed !important;
-            display: block !important;
+            position: fixed !important; /* Ghim theo màn hình hiển thị */
             
-            /* Kích thước chuẩn chỉnh trên Desktop */
-            width: 24rem !important;
-            height: 40rem !important;
+            /* ĐỊNH HÌNH KÍCH THƯỚC: Ép cố định, script Dify không thể resize nhỏ lại được */
+            width: 24rem !important;   /* Chiều rộng mong muốn trên máy tính */
+            height: 40rem !important;  /* Chiều cao mong muốn trên máy tính */
             
-            /* Cố định vị trí tương đối so với màn hình người dùng nhìn thấy */
-            bottom: 6.5rem !important; /* Đẩy lên trên nút bấm để lộ hoàn toàn nút Close */
+            /* ĐỊNH VỊ: Nằm cố định ngay phía trên nút bấm */
+            bottom: 6.5rem !important; 
             right: 2rem !important;
             z-index: 999999 !important;
             
-            /* Bẻ gãy hoàn toàn các lệnh đẩy xuống đáy của script Dify */
+            /* Bẻ gãy toàn bộ tính toán sai lệch tọa độ của script Dify */
             top: auto !important;
             left: auto !important;
             margin: 0 !important;
             padding: 0 !important;
         }
 
-        /* Khi bấm nút X, Dify sẽ thêm thuộc tính ẩn ngầm, style này giúp nhường đường để đóng */
+        /* Chừa đường cho nút Close (X) hoạt động ẩn khung chat khi bấm */
         html body #dify-chatbot-bubble-window[style*="display: none"],
         html body #dify-chatbot-bubble-window[hidden] {
             display: none !important;
@@ -522,18 +520,17 @@
         /* ======================================================== */
         @media (max-width: 640px) {
             
-            /* Cửa sổ chat trên Mobile chiếm % hợp lý, không lo tràn viền che nút Close */
+            /* Khóa kích thước theo tỷ lệ % trên Mobile, không lo bị Dify thu nhỏ */
             html body #dify-chatbot-bubble-window {
                 position: fixed !important;
-                width: 85% !important;     /* Chiếm 85% bề ngang */
-                height: 65% !important;    /* Chiếm 65% bề dọc màn hình */
+                width: 85% !important;     /* Luôn chiếm 85% bề ngang màn hình mobile */
+                height: 65% !important;    /* Luôn chiếm 65% bề dọc màn hình mobile */
                 
                 right: 1.5rem !important;
-                bottom: 5.5rem !important; /* Đẩy lên trên nút bấm mobile */
+                bottom: 5.5rem !important; /* Nằm ngay trên nút bấm mobile */
                 
                 top: auto !important;
                 left: auto !important;
-                transform: none !important;
                 border-radius: 12px !important;
             }
             
@@ -544,7 +541,6 @@
                 bottom: 1.5rem !important;
                 top: auto !important;
                 left: auto !important;
-                transform: none !important;
             }
         }
     </style>
