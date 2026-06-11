@@ -448,9 +448,6 @@
         updateLanguageDOM();
     </script>
 
-    /* ================ */
-    /* CHAT BOT         */
-    /* ================ */
     <script>
         window.difyChatbotConfig = {
         token: 'AviqQLJgVDqShzhe',
@@ -475,14 +472,68 @@
         id="AviqQLJgVDqShzhe"
         defer>
     </script>
+    
     <style>
-        #dify-chatbot-bubble-button {
+        /* ======================================================== */
+        /* 1. ĐỊNH VỊ TRÊN MÁY TÍNH (DESKTOP)                      */
+        /* ======================================================== */
+        
+        /* Ghim nút bấm chat cố định ở góc phải dưới màn hình */
+        html body div#dify-chatbot-bubble-button {
             background-color: #1C64F2 !important;
+            position: fixed !important;
+            bottom: 2rem !important;  /* Cách đáy màn hình hiển thị */
+            right: 2rem !important;   /* Cách mép phải màn hình hiển thị */
+            z-index: 999999 !important;
         }
-        #dify-chatbot-bubble-window {
+        
+        /* Ghim cửa sổ chat cố định NGAY PHÍA TRÊN nút bấm */
+        html body div#dify-chatbot-bubble-window {
+            position: fixed !important; /* Buộc ghim theo màn hình nhìn thấy, không trôi theo chiều dài trang */
+            
+            /* Kích thước lý tưởng trên Desktop */
             width: 24rem !important;
             height: 40rem !important;
+            
+            /* Thiết lập tọa độ neo cứng */
+            bottom: 6.5rem !important; /* Đẩy lên trên nút bấm (2rem đáy + chiều cao nút) */
+            right: 2rem !important;    /* Thẳng hàng lề phải với nút bấm */
+            z-index: 999999 !important;
+            
+            /* Hủy bỏ hoàn toàn các tính toán vị trí sai lệch từ đỉnh và lề trái của Dify */
+            top: auto !important;
+            left: auto !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* ======================================================== */
+        /* 2. ĐỊNH VỊ THEO TỶ LỆ TRÊN ĐIỆN THOẠI (MOBILE)           */
+        /* ======================================================== */
+        @media (max-width: 640px) {
+            
+            /* Cửa sổ chat tự co giãn theo tỷ lệ % màn hình điện thoại */
+            html body div#dify-chatbot-bubble-window {
+                position: fixed !important;
+                width: 85% !important;     /* Chiếm 85% chiều rộng mọi màn hình */
+                height: 65% !important;    /* Chiếm 65% chiều cao mọi màn hình */
+                
+                right: 1.5rem !important;  /* Khoảng cách lề phải mượt mà trên mobile */
+                bottom: 5.5rem !important; /* Nằm ngay phía trên nút bấm mobile */
+                
+                top: auto !important;
+                left: auto !important;
+                border-radius: 12px !important;
+            }
+            
+            /* Nút bấm nhỏ gọn trên Mobile */
+            html body div#dify-chatbot-bubble-button {
+                position: fixed !important;
+                right: 1.5rem !important;  /* Thẳng hàng với mép phải khung chat */
+                bottom: 1.5rem !important; /* Cách đáy màn hình điện thoại */
+            }
         }
     </style>
+    
 </body>
 </html>
